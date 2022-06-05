@@ -12,6 +12,7 @@ pub struct Camera
 
 impl Camera
 {
+    #[allow(dead_code)]
     pub fn new() -> Camera
     {
         let aspect_ratio = 16.0 / 9.0;

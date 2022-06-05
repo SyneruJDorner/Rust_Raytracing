@@ -17,12 +17,16 @@ pub struct Vec3
 
 impl Vec3
 {
+    #[allow(dead_code)]
     pub fn new(x: f32, y: f32, z: f32) -> Vec3
     {
         Vec3 { x: x, y: y, z: z }
     }
 
-    pub const ZERO: Vec3 = Vec3 { x: 0.0, y: 0.0, z: 0.0 };
+    pub fn zero() -> Vec3
+    {
+        Vec3 { x: 0.0, y: 0.0, z: 0.0 }
+    }
 
     pub fn normalize(&self) -> Vec3
     {
@@ -96,5 +100,16 @@ impl Vec3
         {
             return Vec3::new(-in_unit_sphere.x, -in_unit_sphere.y, -in_unit_sphere.z);
         }
+    }
+
+    pub fn near_zero(&self) -> bool
+    {
+        let s = 1e-8;
+        return (libm::fabs(self.x as f64) < s) && (libm::fabs(self.y as f64) < s) && (libm::fabs(self.z as f64) < s);
+    }
+
+    pub fn reflect(v: &Vec3, n: &Vec3) -> Vec3
+    {
+        return v - 2.0 * Vec3::dot(v, n) * n;
     }
 }

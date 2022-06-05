@@ -8,46 +8,58 @@ https://github.com/dps/rust-raytracer
 */
 
 #[path = "math/constants/constants.rs"] mod constants;
-#[path = "math/utils/utils.rs"] mod utils;
 #[path = "math/vec3/vec3.rs"] mod vec3;
-#[path = "math/color/color.rs"] mod color;
-#[path = "math/ray/ray.rs"] mod ray;
-#[path = "math/camera/camera.rs"] mod camera;
-#[path = "math/hittable/hittablelist.rs"] mod hittablelist;
-#[path = "math/hittable/hittable.rs"] mod hittable;
-#[path = "math/shapes/sphere.rs"] mod sphere;
+#[path = "math/utils/utils.rs"] mod utils;
+#[path = "raytracing/color/color.rs"] mod color;
+#[path = "raytracing/ray/ray.rs"] mod ray;
+#[path = "raytracing/camera/camera.rs"] mod camera;
+#[path = "raytracing/hittable/hittablelist.rs"] mod hittablelist;
+#[path = "raytracing/hittable/hittable.rs"] mod hittable;
+#[path = "raytracing/shapes/sphere.rs"] mod sphere;
+#[path = "raytracing/material/material.rs"] mod material;
+#[path = "raytracing/material/submaterials/lamertian.rs"] mod lamberian;
+#[path = "raytracing/material/submaterials/metal.rs"] mod metal;
+
+use material::Material as Material;
+use material::submaterials::lamertian::Lambertian as Lambertian;
+use material::submaterials::metal::Metal as Metal;
+
+use crate::material::Scatterable;
 
 fn ray_color(r: &ray::Ray, world: &hittablelist::HittableList, depth: i32)  -> vec3::Vec3
 {
-    let closest_object = world.hit_closest_object(r, 0.001, constants::INFINITY as f32);
-
     if depth <= 0
     {
         return vec3::Vec3::new(0.0, 0.0, 0.0);
     }
-
-    if closest_object != None
+    
+    let closest_object = world.hit_closest_object(r, 0.001, constants::INFINITY as f32);
+    
+    //Handle all reflections
+    if closest_object.is_some()
     {
         let hit_obj = closest_object.unwrap();
-        let target: vec3::Vec3 = hit_obj.point + vec3::Vec3::random_in_hemisphere(&hit_obj.normal);
-        let bounce_ray = ray::Ray::new(hit_obj.point, target - hit_obj.point);
-        return 0.5 * ray_color(&bounce_ray, world, depth - 1);
+        let scatter = hit_obj.material.scatter(&r, &hit_obj);
+        if scatter.is_some()
+        {
+            let scattered = scatter.unwrap().0;
+            let attenuation = scatter.unwrap().1;
+            return attenuation * ray_color(&scattered, world, depth - 1);
+        }
+        return vec3::Vec3::new(1.0, 1.0, 1.0);
     }
+
     let unit_direction = vec3::Vec3::normalize(&r.direction());
     let t = 0.5*(unit_direction.y + 1.0);
     let color_1 = vec3::Vec3::new(1.0, 1.0, 1.0);
     let color_2 = vec3::Vec3::new(0.5, 0.7, 1.0);
     let sky_color = (1.0 - t) * color_1 + t * color_2;
-    return sky_color
+    return sky_color;
 }
 
 
 fn main()
 {
-    //Time
-    // use std::time::Instant;
-    // let now = Instant::now();
-
     //Image
     const ASPECT_RATIO:f32 = 16.0 / 9.0;
     const IMAGE_WIDTH:i32 = 1920;
@@ -57,8 +69,16 @@ fn main()
 
     //World
     let mut world: hittablelist::HittableList = hittablelist::HittableList::new();
-    world.add(sphere::Sphere::new(vec3::Vec3::new(0.0, 0.0, -1.0), 0.5));
-    world.add(sphere::Sphere::new(vec3::Vec3::new(0.0, -100.5, -1.0), 100.0));
+    
+    let material_ground = Material::Lambertian(Lambertian::new(vec3::Vec3::new(0.8, 0.8, 0.0)));
+    let material_center = Material::Lambertian(Lambertian::new(vec3::Vec3::new(0.7, 0.3, 0.3)));
+    let material_left   = Material::Metal(Metal::new(vec3::Vec3::new(0.8, 0.8, 0.8), 0.3));
+    let material_right  = Material::Metal(Metal::new(vec3::Vec3::new(0.8, 0.6, 0.2), 1.0));
+
+    world.add(sphere::Sphere::new(vec3::Vec3::new(0.0, -100.5, -1.0), 100.0, material_ground));
+    world.add(sphere::Sphere::new(vec3::Vec3::new(0.0, 0.0, -1.0), 0.5, material_center));
+    world.add(sphere::Sphere::new(vec3::Vec3::new(-1.0, 0.0, -1.0), 0.5, material_left));
+    world.add(sphere::Sphere::new(vec3::Vec3::new(1.0, 0.0, -1.0), 0.5, material_right));
 
     // Camera
     let cam: camera::Camera = camera::Camera::new();
