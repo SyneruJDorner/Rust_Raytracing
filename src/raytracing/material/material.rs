@@ -6,6 +6,7 @@ pub mod submaterials
 {
     pub mod lamertian;
     pub mod metal;
+    pub mod glass;
 }
 
 pub trait Scatterable
@@ -16,8 +17,12 @@ pub trait Scatterable
 #[derive(Copy, Clone, Debug)]
 pub enum Material
 {
+    #[allow(dead_code)]
     Lambertian(submaterials::lamertian::Lambertian),
-    Metal(submaterials::metal::Metal)
+    #[allow(dead_code)]
+    Metal(submaterials::metal::Metal),
+    #[allow(dead_code)]
+    Glass(submaterials::glass::Glass)
 }
 
 impl Scatterable for Material
@@ -27,7 +32,8 @@ impl Scatterable for Material
         match self
         {
             Material::Lambertian(l) => l.scatter(ray, hit_record),
-            Material::Metal(m) => m.scatter(ray, hit_record)
+            Material::Metal(m) => m.scatter(ray, hit_record),
+            Material::Glass(g) => g.scatter(ray, hit_record)
         }
     }
 }

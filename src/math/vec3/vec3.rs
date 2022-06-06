@@ -1,3 +1,5 @@
+use libm::fabs;
+
 mod operators {
     pub mod mul;
     pub mod div;
@@ -105,11 +107,22 @@ impl Vec3
     pub fn near_zero(&self) -> bool
     {
         let s = 1e-8;
-        return (libm::fabs(self.x as f64) < s) && (libm::fabs(self.y as f64) < s) && (libm::fabs(self.z as f64) < s);
+        return (fabs(self.x as f64) < s) && (fabs(self.y as f64) < s) && (fabs(self.z as f64) < s);
     }
 
     pub fn reflect(v: &Vec3, n: &Vec3) -> Vec3
     {
         return v - 2.0 * Vec3::dot(v, n) * n;
+    }
+
+    pub fn refract(uv: &Vec3, n: &Vec3, etai_over_etat: f32) -> Vec3
+    {
+        let inverse_uv = Vec3::inverse(uv);
+        let uv_val = *uv;
+        let n_val = *n;
+        let cos_theta = (Vec3::dot(&inverse_uv, n)).min(1.0);
+        let r_out_perp = (uv_val + n_val * cos_theta) * etai_over_etat;
+        let r_out_parallel = n_val * (-1.0 * (1.0 - r_out_perp.length_squared()).abs().sqrt());
+        return r_out_perp + r_out_parallel
     }
 }
