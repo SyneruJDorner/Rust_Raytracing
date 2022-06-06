@@ -32,6 +32,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "33a33a362ce288760ec6a508b94caaec573ae7d3bbbd91b87aa0bad4456839db"
 
 [[package]]
+name = "map_3d"
+version = "0.1.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ed9c839122a3076d28500229cfebcd570d7dab4b300449dbf7f02ca17b0fe518"
+
+[[package]]
 name = "ppv-lite86"
 version = "0.2.16"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -72,6 +78,7 @@ name = "rust_raytracing"
 version = "0.1.0"
 dependencies = [
  "libm",
+ "map_3d",
  "rand",
 ]
 

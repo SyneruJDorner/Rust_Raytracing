@@ -50,14 +50,19 @@ impl Transform
 
     fn update_local_matrix(mut self) -> Transform
     {
-        self.local_matrix = Matrix4x4::identity();
         self.world_matrix = Matrix4x4::identity();
-        self.world_matrix = self.world_matrix.scale(self.scale);
-        self.world_matrix = self.world_matrix.rotate_x(self.rotation.x);
-        self.world_matrix = self.world_matrix.rotate_y(self.rotation.y);
-        self.world_matrix = self.world_matrix.rotate_z(self.rotation.z);
-        self.world_matrix = self.world_matrix.translate(self.position);
-        self.local_matrix = self.world_matrix.inverse();
+
+        let scale = self.world_matrix.scale(self.scale);
+        let rotation_x = self.world_matrix.rotate_x(self.rotation.x);
+        let rotation_y = self.world_matrix.rotate_y(self.rotation.y);
+        let rotation_z = self.world_matrix.rotate_z(self.rotation.z);
+        let position = self.world_matrix.translate(self.position);
+        
+        let srt_matrix = scale * (rotation_z * rotation_y * rotation_x) * position;
+        self.world_matrix = srt_matrix;
+        self.local_matrix = srt_matrix.inverse();
+        // println!("Scale x Rotation x Position:");
+        //Matrix4x4::print_matrix(srt_matrix);
         return self;
     }
 }

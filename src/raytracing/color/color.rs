@@ -1,7 +1,7 @@
 use crate::vec3::Vec3;
 use crate::utils::clamp;
 
-//make a function that writes a colour to the the println
+#[allow(dead_code)]
 pub fn write_color(rgb: Vec3, samples_per_pixel: i32)
 {
     let mut r = rgb.x;

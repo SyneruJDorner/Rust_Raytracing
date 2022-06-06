@@ -2,6 +2,10 @@ use libm::atan2f;
 
 use crate::vec3::Vec3;
 
+mod operators {
+    pub mod mul;
+}
+
 #[derive(Copy, Clone, Debug, PartialEq, PartialOrd)]
 pub struct Matrix4x4
 {
@@ -69,11 +73,16 @@ impl Matrix4x4
 		return self;
 	}
 
+    //Equivilent to rolling
+    //|1    0       0       x|
+    //|0    cos()   -sin()  y|
+    //|0    sin()   cos()   z|
+    //|0    0       0       1|
     #[allow(dead_code)]
     pub fn rotate_x(mut self, angle: f32) -> Matrix4x4
     {
-        let c = angle.cos();
-        let s = angle.sin();
+        let c = angle.to_radians().cos();
+        let s = angle.to_radians().sin();
         self.matrix[1][1] = c;
         self.matrix[1][2] = -s;
         self.matrix[2][1] = s;
@@ -84,8 +93,8 @@ impl Matrix4x4
     #[allow(dead_code)]
     pub fn rotate_y(mut self, angle: f32) -> Matrix4x4
     {
-        let c = angle.cos();
-        let s = angle.sin();
+        let c = angle.to_radians().cos();
+        let s = angle.to_radians().sin();
         self.matrix[0][0] = c;
         self.matrix[0][2] = s;
         self.matrix[2][0] = -s;
@@ -96,8 +105,8 @@ impl Matrix4x4
     #[allow(dead_code)]
     pub fn rotate_z(mut self, angle: f32) -> Matrix4x4
     {
-        let c = angle.cos();
-        let s = angle.sin();
+        let c = angle.to_radians().cos();
+        let s = angle.to_radians().sin();
         self.matrix[0][0] = c;
         self.matrix[0][1] = -s;
         self.matrix[1][0] = s;
@@ -204,6 +213,47 @@ impl Matrix4x4
         let z = self.matrix[2][0] * v.x + self.matrix[2][1] * v.y + self.matrix[2][2] * v.z + self.matrix[2][3];
         return Vec3::new(x, y, z);
     }
+
+    // #[allow(dead_code)]
+    // pub fn mul_maxtrix4x4(self, b: Matrix4x4) -> Matrix4x4
+    // {
+    //     let mut result = Matrix4x4::new();
+    //     for i in 0..4
+    //     {
+    //         for j in 0..4
+    //         {
+    //             let mut num: f32 = 0.0;
+    //             for m in 0..4
+    //             {
+    //                 num += self.matrix[i][m] * b.matrix[m][j];
+    //             }
+    //             result.matrix[i][j] = num;
+    //         }
+    //     }
+    //     return result;
+
+        // for (int n = 0; n < N; n++) {
+        //     for (int p = 0; p < P; p++) {
+        //         int num = 0;
+        //         for (int m = 0; m < M; m++) {
+        //             num += A[n][m] * B[m][p];
+        //         }
+        //         C[n][p] = num;
+        //         std::cout << num << " ";
+        //     }
+        //     std::cout << std::endl;
+        // }
+
+        // let mut result = Matrix4x4::new();
+        // for i in 0..4
+        // {
+        //     for j in 0..4
+        //     {
+        //         result.matrix[i][j] = self.matrix[i][j] * other.matrix[j][i];
+        //     }
+        // }
+        // result
+    // }
 
     #[allow(dead_code)]
     pub fn to_vec3(self) -> Vec3
@@ -347,4 +397,70 @@ impl Matrix4x4
         }
 		return result;
 	}
+
+    #[allow(dead_code)]
+    pub fn print_matrix(m: Matrix4x4)
+    {
+        println!("{:.2}\t{:.2}\t{:.2}\t{:.2}\n{:.2}\t{:.2}\t{:.2}\t{:.2}\n{:.2}\t{:.2}\t{:.2}\t{:.2}\n{:.2}\t{:.2}\t{:.2}\t{:.2}\n",
+                    m.matrix[0][0], m.matrix[0][1], m.matrix[0][2], m.matrix[0][3],
+                    m.matrix[1][0], m.matrix[1][1], m.matrix[1][2], m.matrix[1][3],
+                    m.matrix[2][0], m.matrix[2][1], m.matrix[2][2], m.matrix[2][3],
+                    m.matrix[3][0], m.matrix[3][1], m.matrix[3][2], m.matrix[3][3]);
+    }
+
+    #[allow(dead_code)]
+    pub fn multiply_dir_matrix(self, src: Vec3) -> Vec3
+    {  
+        let mut dst: Vec3 = Vec3::new(0.0, 0.0, 0.0);
+        let a = src.x * self.matrix[0][0] + src.y * self.matrix[1][0] + src.z * self.matrix[2][0]; 
+        let b = src.x * self.matrix[0][1] + src.y * self.matrix[1][1] + src.z * self.matrix[2][1]; 
+        let c = src.x * self.matrix[0][2] + src.y * self.matrix[1][2] + src.z * self.matrix[2][2]; 
+ 
+        dst.x = a; 
+        dst.y = b; 
+        dst.z = c; 
+
+        return dst;
+    }
+
+    #[allow(dead_code)]
+    pub fn multiply_vec3_matrix(self, src: Vec3) -> Vec3
+    {
+        let mut dst: Vec3 = Vec3::new(0.0, 0.0, 0.0);
+        let a = src.x * self.matrix[0][0] + src.y * self.matrix[1][0] + src.z * self.matrix[2][0] + self.matrix[3][0]; 
+        let b = src.x * self.matrix[0][1] + src.y * self.matrix[1][1] + src.z * self.matrix[2][1] + self.matrix[3][1];  
+        let c = src.x * self.matrix[0][2] + src.y * self.matrix[1][2] + src.z * self.matrix[2][2] + self.matrix[3][2]; 
+        let w = src.x * self.matrix[0][2] + src.y * self.matrix[1][2] + src.z * self.matrix[2][2] + self.matrix[3][3];
+
+        dst.x = a / w; 
+        dst.y = b / w; 
+        dst.z = c / w; 
+
+        return dst;
+    }
 }
+
+
+
+/*
+    let mut test = Matrix4x4::identity();
+    test.matrix[0][0] = z.cos() * y.cos();
+    test.matrix[0][1] = z.cos() * y.sin() * x.sin() - z.sin() * x.cos();
+    test.matrix[0][2] = z.cos() * y.sin() * x.cos() + z.sin() * x.sin();
+    test.matrix[0][3] = self.position.x;
+
+    test.matrix[1][0] = z.sin() * y.cos();
+    test.matrix[1][1] = z.sin() * y.sin() * x.sin() + z.cos() * x.cos();
+    test.matrix[1][2] = z.sin() * y.sin() * x.cos() - z.cos() * x.sin();
+    test.matrix[1][3] = self.position.y;
+
+    test.matrix[2][0] = -y.sin();
+    test.matrix[2][1] = y.cos() * x.sin();
+    test.matrix[2][2] = y.cos() * x.cos();
+    test.matrix[2][3] = self.position.z;
+
+    test.matrix[3][0] = 0.0;
+    test.matrix[3][1] = 0.0;
+    test.matrix[3][2] = 0.0;
+    test.matrix[3][3] = 1.0;
+*/
