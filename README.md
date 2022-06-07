@@ -37,6 +37,16 @@ This project is to test my knowledge in rust, by building on top of my knowledge
 **PPM Image Viewer:**<br/>
 - https://www.cs.rhodes.edu/welshc/COMP141_F16/ppmReader.html
 <br/>
+
+**Reference Links:**<br/>
+- https://raytracing.github.io/books/RayTracingInOneWeekend.html
+- https://github.com/ryankaplan/vec3/blob/master/src/lib.rs
+- http://www.cplusplus.com/forum/general/243435/
+- https://github.com/justindd1994/rtv1/tree/master/Constructs/Vector/Vector3/operators
+- https://github.com/dps/rust-raytracer
+- https://www.andre-gaschler.com/rotationconverter/ { Used to make sure Matrix calcaulations are correct }
+- https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-generating-camera-rays/generating-camera-rays { Matching up rays direction with camera's direction }
+<br/>
 <br/>
 
 ![Prefab](https://raw.githubusercontent.com/justindd1994/Rust_Raytracing/master/ray-tracing-demo.png)<br/>
