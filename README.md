@@ -17,6 +17,8 @@ This project is to test my knowledge in rust, by building on top of my knowledge
 -Rotations and storing the transforms as these seem to be reset after assignment, something I don't understand in Rust I assume.
 
 **Need to Implement:**<br/>
+-Lights
+-Shadows from light sources.
 -Different shapes.
 -Loading textures.
 -Loading Meshes/Models.
