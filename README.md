@@ -49,6 +49,6 @@ This project is to test my knowledge in rust, by building on top of my knowledge
 <br/>
 <br/>
 
-![Prefab](https://raw.githubusercontent.com/justindd1994/Rust_Raytracing/master/ray-tracing-demo.png)<br/>
-![Prefab](https://raw.githubusercontent.com/justindd1994/Rust_Raytracing/master/ray-tracing-demo-2.png)<br/>
-![Prefab](https://raw.githubusercontent.com/justindd1994/Rust_Raytracing/master/ray-tracing-demo-3.png)<br/>
+![Prefab](https://github.com/justindd1994/Rust_Raytracing/blob/master/images/ray-tracing-demo.png)<br/>
+![Prefab](https://github.com/justindd1994/Rust_Raytracing/blob/master/images/ray-tracing-demo-2.png)<br/>
+![Prefab](https://github.com/justindd1994/Rust_Raytracing/blob/master/images/ray-tracing-demo-3.png)<br/>
