@@ -83,16 +83,10 @@ fn main()
     camera.set_aspect_ratio(ASPECT_RATIO);
     camera.set_field_of_view(FOV);
 
-    // println!("{} {} {}\n", camera.transform.position.x, camera.transform.position.y, camera.transform.position.z);
-    // println!("{} {} {}\n", camera.transform.rotation.x, camera.transform.rotation.y, camera.transform.rotation.z);
-    // println!("{} {} {}\n", camera.transform.scale.x, camera.transform.scale.y, camera.transform.scale.z);
-
     //Render
     println!("P3\n{} {}\n255", IMAGE_WIDTH, IMAGE_HEIGHT);
 
-    //let cameraToWorld: Matrix4x4; 
     let scale: f32 = (deg2rad((FOV * 0.5).into()) as f64).tan() as f32; 
-    //let aspect_ratio = IMAGE_WIDTH as f32 / IMAGE_HEIGHT as f32; 
     let camera_to_world: Matrix4x4 = Matrix4x4::identity();
     let ray_origin = camera_to_world.multiply_vec3_matrix(Vec3::new(100.0, 0.0, -100.0));
     for y in (0..IMAGE_HEIGHT).rev()
@@ -114,23 +108,4 @@ fn main()
             color::write_color(pixel_color, SAMPLES_PER_PIXEL);
         }
     }
-
-
-
-    // for y in (0..IMAGE_HEIGHT).rev()
-    // {
-    //     for x in 0..IMAGE_WIDTH
-    //     {
-    //         let mut pixel_color = Vec3::new(0.0, 0.0, 0.0);
-    //         for _ in 0..SAMPLES_PER_PIXEL
-    //         {
-    //             let u = (((x as f32) + utils::random_float(0.0, 1.0)) / (IMAGE_WIDTH - 1) as f32) as f32;
-    //             let v = (((y as f32) + utils::random_float(0.0, 1.0)) / (IMAGE_HEIGHT - 1) as f32) as f32;
-    //             let r = camera.get_ray(u, v);
-    //             let new_color = pixel_color + Ray::calcaulte_ray(&r, &world, MAX_DEPTH);
-    //             pixel_color = new_color;
-    //         }
-    //         color::write_color(pixel_color, SAMPLES_PER_PIXEL);
-    //     }
-    // }
 }

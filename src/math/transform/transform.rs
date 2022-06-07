@@ -61,8 +61,6 @@ impl Transform
         let srt_matrix = scale * (rotation_z * rotation_y * rotation_x) * position;
         self.world_matrix = srt_matrix;
         self.local_matrix = srt_matrix.inverse();
-        // println!("Scale x Rotation x Position:");
-        //Matrix4x4::print_matrix(srt_matrix);
         return self;
     }
 }

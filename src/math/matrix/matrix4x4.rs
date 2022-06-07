@@ -214,47 +214,6 @@ impl Matrix4x4
         return Vec3::new(x, y, z);
     }
 
-    // #[allow(dead_code)]
-    // pub fn mul_maxtrix4x4(self, b: Matrix4x4) -> Matrix4x4
-    // {
-    //     let mut result = Matrix4x4::new();
-    //     for i in 0..4
-    //     {
-    //         for j in 0..4
-    //         {
-    //             let mut num: f32 = 0.0;
-    //             for m in 0..4
-    //             {
-    //                 num += self.matrix[i][m] * b.matrix[m][j];
-    //             }
-    //             result.matrix[i][j] = num;
-    //         }
-    //     }
-    //     return result;
-
-        // for (int n = 0; n < N; n++) {
-        //     for (int p = 0; p < P; p++) {
-        //         int num = 0;
-        //         for (int m = 0; m < M; m++) {
-        //             num += A[n][m] * B[m][p];
-        //         }
-        //         C[n][p] = num;
-        //         std::cout << num << " ";
-        //     }
-        //     std::cout << std::endl;
-        // }
-
-        // let mut result = Matrix4x4::new();
-        // for i in 0..4
-        // {
-        //     for j in 0..4
-        //     {
-        //         result.matrix[i][j] = self.matrix[i][j] * other.matrix[j][i];
-        //     }
-        // }
-        // result
-    // }
-
     #[allow(dead_code)]
     pub fn to_vec3(self) -> Vec3
 	{
@@ -302,67 +261,6 @@ impl Matrix4x4
         let z = Vec3::new(self.matrix[0][0], self.matrix[1][1], self.matrix[2][2]).length();
         return Vec3::new(x, y, z);
 	}
-
-    //Add in the future
-    // pub fn extract_rotation(self) -> Quaternion {
-    //     let q: Quaternion = Quaternion::new();
-    //     let trace = self.matrix[0][0] + self.matrix[1][1] + self.matrix[2][2];
-
-    //     if trace > 0.0
-    //     {
-    //         let s = 0.5 / sqrt(trace + 1.0);
-	// 		q.r = 0.25 / s;
-	// 		q.i = (self.matrix[2][1] - self.matrix[1][2]) * s;
-	// 		q.j = (self.matrix[0][2] - self.matrix[2][0]) * s;
-	// 		q.k = (self.matrix[1][0] - self.matrix[0][1]) * s;
-    //     }
-    //     else
-    //     {
-    //         if (self.matrix[0][0] > self.matrix[1][1] && self.matrix[0][0] > self.matrix[2][2])
-	// 		{
-	// 			let s = 2.0 * sqrtf(1.0 + self.matrix[0][0] - self.matrix[1][1] - self.matrix[2][2]);
-	// 			q.r = (self.matrix[2][1] - self.matrix[1][2]) / s;
-	// 			q.i = 0.25 * s;
-	// 			q.j = (self.matrix[0][1] + self.matrix[1][0]) / s;
-	// 			q.k = (self.matrix[0][2] + self.matrix[2][0]) / s;
-	// 		}
-	// 		else if (self.matrix[1][1] > self.matrix[2][2])
-	// 		{
-	// 			let s = 2.0 * sqrtf(1.0 + self.matrix[1][1] - self.matrix[0][0] - self.matrix[2][2]);
-	// 			q.r = (self.matrix[0][2] - self.matrix[2][0]) / s;
-	// 			q.i = (self.matrix[0][1] + self.matrix[1][0]) / s;
-	// 			q.j = 0.25 * s;
-	// 			q.k = (self.matrix[1][2] + self.matrix[2][1]) / s;
-	// 		}
-	// 		else
-	// 		{
-	// 			let s = 2.0 * sqrtf(1.0 + self.matrix[2][2] - self.matrix[0][0] - self.matrix[1][1]);
-	// 			q.r = (self.matrix[1][0] - self.matrix[0][1]) / s;
-	// 			q.i = (self.matrix[0][2] + self.matrix[2][0]) / s;
-	// 			q.j = (self.matrix[1][2] + self.matrix[2][1]) / s;
-	// 			q.k = 0.25 * s;
-	// 		}
-    //     }
-    //     return q;
-    // }
-
-    // pub fn extract_rotation_x(self) -> f32
-	// {
-	// 	let rot: Quaternion = self.extract_rotation();
-	// 	return rot.euler_angles().x;
-	// }
-
-    // pub fn extract_rotation_y(self) -> f32
-	// {
-	// 	let rot: Quaternion = self.extract_rotation();
-	// 	return rot.euler_angles().y;
-	// }
-
-    // pub fn extract_rotation_z(self) -> f32
-	// {
-	// 	let rot: Quaternion = self.extract_rotation();
-	// 	return rot.euler_angles().z;
-	// }
     
     #[allow(dead_code)]
     pub fn decompose(self, translation: &mut Vec3, rotation: &mut Vec3, scale: &mut Vec3)
@@ -439,28 +337,3 @@ impl Matrix4x4
         return dst;
     }
 }
-
-
-
-/*
-    let mut test = Matrix4x4::identity();
-    test.matrix[0][0] = z.cos() * y.cos();
-    test.matrix[0][1] = z.cos() * y.sin() * x.sin() - z.sin() * x.cos();
-    test.matrix[0][2] = z.cos() * y.sin() * x.cos() + z.sin() * x.sin();
-    test.matrix[0][3] = self.position.x;
-
-    test.matrix[1][0] = z.sin() * y.cos();
-    test.matrix[1][1] = z.sin() * y.sin() * x.sin() + z.cos() * x.cos();
-    test.matrix[1][2] = z.sin() * y.sin() * x.cos() - z.cos() * x.sin();
-    test.matrix[1][3] = self.position.y;
-
-    test.matrix[2][0] = -y.sin();
-    test.matrix[2][1] = y.cos() * x.sin();
-    test.matrix[2][2] = y.cos() * x.cos();
-    test.matrix[2][3] = self.position.z;
-
-    test.matrix[3][0] = 0.0;
-    test.matrix[3][1] = 0.0;
-    test.matrix[3][2] = 0.0;
-    test.matrix[3][3] = 1.0;
-*/
