@@ -8,7 +8,10 @@ pub struct Transform
     pub rotation: Vec3,
     pub scale: Vec3,
     pub world_matrix: Matrix4x4,
-    pub local_matrix: Matrix4x4
+    pub local_matrix: Matrix4x4,
+    pub right: Vec3,
+    pub forward: Vec3,
+    pub up: Vec3
 }
 
 impl Transform
@@ -22,7 +25,10 @@ impl Transform
             rotation: Vec3::new(0.0, 0.0, 0.0),
             scale: Vec3::new(1.0, 1.0, 1.0),
             world_matrix: Matrix4x4::identity(),
-            local_matrix: Matrix4x4::identity()
+            local_matrix: Matrix4x4::identity(),
+            right: Vec3::new(1.0, 0.0, 0.0),
+            forward: Vec3::new(0.0, 1.0, 0.0),
+            up: Vec3::new(0.0, 0.0, 1.0)
         }
     }
 
@@ -31,24 +37,24 @@ impl Transform
     pub fn set_position(&mut self, position: Vec3)
     {
         self.position = position;
-        self.update_local_matrix();
+        self.update_transform();
     }
 
     #[allow(dead_code)]
     pub fn set_rotation(&mut self, rotation: Vec3)
     {
         self.rotation = rotation;
-        self.update_local_matrix();
+        self.update_transform();
     }
 
     #[allow(dead_code)]
     pub fn set_scale(&mut self, scale: Vec3)
     {
         self.scale = scale;
-        self.update_local_matrix();
+        self.update_transform();
     }
 
-    fn update_local_matrix(mut self) -> Transform
+    fn update_transform(&mut self) -> Transform
     {
         self.world_matrix = Matrix4x4::identity();
 
@@ -58,9 +64,13 @@ impl Transform
         let rotation_z = self.world_matrix.rotate_z(self.rotation.z);
         let position = self.world_matrix.translate(self.position);
         
-        let srt_matrix = scale * (rotation_z * rotation_y * rotation_x) * position;
+        let srt_matrix = scale * (rotation_x * rotation_y * rotation_z) * position;
         self.world_matrix = srt_matrix;
-        self.local_matrix = srt_matrix.inverse();
-        return self;
+
+        self.right = Vec3::new(self.world_matrix.matrix[0][0], self.world_matrix.matrix[1][0], self.world_matrix.matrix[2][0]);
+        self.forward = Vec3::new(self.world_matrix.matrix[0][1], self.world_matrix.matrix[1][1], self.world_matrix.matrix[2][1]);
+        self.up = Vec3::new(self.world_matrix.matrix[0][2], self.world_matrix.matrix[1][2], self.world_matrix.matrix[2][2]);
+
+        return *self;
     }
 }

@@ -1,3 +1,4 @@
+use crate::matrix4x4::Matrix4x4;
 use crate::vec3::Vec3;
 use crate::hittablelist::HittableList;
 use crate::constants::INFINITY;
@@ -8,7 +9,8 @@ pub struct Ray
 {
     pub origin: Vec3,
     pub direction: Vec3,
-    pub color: Vec3
+    pub color: Vec3,
+    pub dir_matrix: Matrix4x4
 }
 
 impl Ray
@@ -16,7 +18,7 @@ impl Ray
     #[allow(dead_code)]
     pub fn new(origin: Vec3, direction: Vec3) -> Ray
     {
-        Ray { origin: origin, direction: direction, color: Vec3::zero() }
+        Ray { origin: origin, direction: direction, color: Vec3::zero(), dir_matrix: Matrix4x4::identity() }
     }
 
     pub fn origin(self) -> Vec3
@@ -32,6 +34,11 @@ impl Ray
     pub fn at(self, t: f32) -> Vec3
     {
         return self.origin + t * self.direction;
+    }
+
+    pub fn set_dir_matrix(&mut self, dir_matrix: Matrix4x4)
+    {
+        self.dir_matrix = dir_matrix;
     }
 
     pub fn calcaulte_ray(r: &Ray, world: &HittableList, depth: i32)  -> Vec3

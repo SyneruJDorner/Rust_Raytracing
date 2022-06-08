@@ -8,13 +8,10 @@ This project is to test my knowledge in rust, by building on top of my knowledge
 
 **Currently working features:**<br/>
 - Basic raytracing of spheres.
-- Moving the camera with Vector3.
+- Moving and rotating the camera using Vector3.
 - Materials: Albedo, Metal, Glass.
 - Anti-Aliasing.
-- Create new windows with content in it.
-
-**Need to fix:**<br/>
-- Rotations and storing the transforms as these seem to be reset after assignment, something I don't understand in Rust I assume.
+<br/>
 
 **Need to Implement:**<br/>
 - Lights
