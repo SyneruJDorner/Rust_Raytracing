@@ -30,9 +30,6 @@ https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-generating-
 #[path = "raytracing/material/submaterials/metal.rs"] mod metal;
 #[path = "raytracing/material/submaterials/glass.rs"] mod glass;
 
-//use map_3d::deg2rad;
-
-//use matrix4x4::Matrix4x4 as Matrix4x4;
 use vec3::Vec3 as Vec3;
 //use ray::Ray as Ray;
 use camera::Camera as Camera;
@@ -80,24 +77,4 @@ fn main()
 
     //Render
     camera.trace(world, IMAGE_WIDTH, IMAGE_HEIGHT, SAMPLES_PER_PIXEL, MAX_DEPTH)
-    // println!("P3\n{} {}\n255", IMAGE_WIDTH, IMAGE_HEIGHT);
-
-    // for y in 0..IMAGE_HEIGHT
-    // {
-    //     for x in 0..IMAGE_WIDTH
-    //     {
-    //         let mut pixel_color = Vec3::new(0.0, 0.0, 0.0);
-    //         for _ in 0..SAMPLES_PER_PIXEL
-    //         {
-    //             let angle: f32 = (deg2rad((camera.fov * 0.5).into()) as f64).tan() as f32;
-    //             let x = (2.0 * (x as f32 + 0.5) / IMAGE_WIDTH as f32 - 1.0) * ASPECT_RATIO * angle;
-    //             let y = (1.0 - 2.0 * (y as f32 + 0.5) / IMAGE_HEIGHT as f32) * angle;
-    //             let dir: Vec3 = camera.ray.dir_matrix.multiply_dir_matrix(Vec3::new(x, y, -1.0)).normalize();
-    //             camera.ray.direction = dir;
-    //             let new_color = pixel_color + Ray::calcaulte_ray(&camera.ray, &world, MAX_DEPTH);
-    //             pixel_color = new_color;
-    //         }
-    //         color::write_color(pixel_color, SAMPLES_PER_PIXEL);
-    //     }
-    // }
 }
