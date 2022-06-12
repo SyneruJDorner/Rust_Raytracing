@@ -37,8 +37,8 @@ impl Scatterable for Glass
             refraction_ratio = self.refract_index;
         }
 
-        let unit_direction = Vec3::inverse(&ray.direction().normalize());
-        let cos_theta = fmin(Vec3::dot(&unit_direction, &hit_record.normal) as f64, 1.0) as f32;
+        let unit_direction = ray.direction().normalize();
+        let cos_theta = fmin(Vec3::dot(&Vec3::inverse(&unit_direction), &hit_record.normal) as f64, 1.0) as f32;
         let sin_theta = (1.0 - cos_theta * cos_theta).sqrt();
 
         let cannot_refract = refraction_ratio * sin_theta > 1.0;

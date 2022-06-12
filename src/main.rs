@@ -76,7 +76,7 @@ fn random_scene() -> HittableList
                 {
                     // glass
                     world.add(Sphere::new(center, 0.2, Material::Glass(Glass::new(1.5))));
-                    world.add(Sphere::new(center, 0.15, Material::Glass(Glass::new(1.5))));
+                    //world.add(Sphere::new(center, 0.15, Material::Glass(Glass::new(1.5))));
                 }
             }
         }
@@ -87,7 +87,7 @@ fn random_scene() -> HittableList
 
     let material2 = Material::Lambertian(Lambertian::new(Vec3::new(0.4, 0.2, 0.1)));
     world.add(Sphere::new(Vec3::new(-4.0, 1.0, 0.0), 1.0, material2));
-    world.add(Sphere::new(Vec3::new(-4.0, 1.0, 0.0), 0.8, material2));
+    //world.add(Sphere::new(Vec3::new(-4.0, 1.0, 0.0), 0.95, material2));
 
     let material3 = Material::Metal(Metal::new(Vec3::new(0.7, 0.6, 0.5), 0.0));
     world.add(Sphere::new(Vec3::new(4.0, 1.0, 0.0), 1.0, material3));
