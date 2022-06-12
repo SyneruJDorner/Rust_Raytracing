@@ -11,6 +11,7 @@ This project is to test my knowledge in rust, by building on top of my knowledge
 - Moving and rotating the camera using Vector3.
 - Materials: Albedo, Metal, Glass.
 - Anti-Aliasing.
+- Settings (though settings.ini file) 
 <br/>
 
 **Need to Implement:**<br/>
