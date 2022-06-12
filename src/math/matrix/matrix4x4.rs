@@ -53,13 +53,13 @@ impl Matrix4x4
     #[allow(dead_code)]
     pub fn translate(mut self, translation: Vec3) -> Matrix4x4
 	{
-		self.matrix[0][3] = translation.x;
-		self.matrix[1][3] = translation.y;
-		self.matrix[2][3] = translation.z;
-		self.matrix[0][0] = 1.0;
-		self.matrix[1][1] = 1.0;
-		self.matrix[2][2] = 1.0;
-		self.matrix[3][3] = 1.0;
+		self.matrix[3][0] = translation.x;
+		self.matrix[3][1] = translation.y;
+		self.matrix[3][2] = translation.z;
+		// self.matrix[0][0] = 1.0;
+		// self.matrix[1][1] = 1.0;
+		// self.matrix[2][2] = 1.0;
+		// self.matrix[3][3] = 1.0;
 		return self;
 	}
 

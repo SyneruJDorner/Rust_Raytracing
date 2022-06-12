@@ -14,6 +14,7 @@ https://www.andre-gaschler.com/rotationconverter/
 https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-generating-camera-rays/generating-camera-rays
 */
 
+#[path = "settings/settings.rs"] mod settings;
 #[path = "math/constants/constants.rs"] mod constants;
 #[path = "math/vec3/vec3.rs"] mod vec3;
 #[path = "math/matrix/matrix4x4.rs"] mod matrix4x4;
@@ -30,8 +31,8 @@ https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-generating-
 #[path = "raytracing/material/submaterials/metal.rs"] mod metal;
 #[path = "raytracing/material/submaterials/glass.rs"] mod glass;
 
+use settings::Settings as Settings;
 use vec3::Vec3 as Vec3;
-//use ray::Ray as Ray;
 use camera::Camera as Camera;
 use hittablelist::HittableList as HittableList;
 use sphere::Sphere as Sphere;
@@ -42,39 +43,73 @@ use material::submaterials::metal::Metal as Metal;
 #[allow(unused_imports)]
 use material::submaterials::glass::Glass as Glass;
 
+fn random_scene() -> HittableList
+{
+    let mut world: HittableList = HittableList::new();
+    
+    let ground_material = Material::Lambertian(Lambertian::new(Vec3::new(0.5, 0.5, 0.5)));
+    world.add(Sphere::new(Vec3::new(0.0,      -1000.0,     0.0),  1000.0,  ground_material));
+
+    for a in -11..11
+    {
+        for b in -11..11
+        {
+            let choose_mat = utils::random_float(0.0, 1.0);
+            let center = Vec3::new(a as f32 + 0.9 * utils::random_float(0.0, 1.0), 0.2, b as f32 + 0.9 * utils::random_float(0.0, 1.0));
+            
+            if (center - Vec3::new(4.0, 0.2, 0.0)).length() > 0.9
+            {
+                if choose_mat < 0.8
+                {
+                    // diffuse
+                    let albedo = Vec3::new(utils::random_float(0.0, 1.0) * utils::random_float(0.0, 1.0), utils::random_float(0.0, 1.0) * utils::random_float(0.0, 1.0), utils::random_float(0.0, 1.0) * utils::random_float(0.0, 1.0));
+                    world.add(Sphere::new(center, 0.2, Material::Lambertian(Lambertian::new(albedo))));
+                }
+                else if choose_mat < 0.95
+                {
+                    // metal
+                    let albedo = Vec3::new(0.5 * (1.0 + utils::random_float(0.0, 1.0)), 0.5 * (1.0 + utils::random_float(0.0, 1.0)), 0.5 * (1.0 + utils::random_float(0.0, 1.0)));
+                    let fuzz = utils::random_float(0.0, 1.0) * 0.5;
+                    world.add(Sphere::new(center, 0.2, Material::Metal(Metal::new(albedo, fuzz))));
+                }
+                else
+                {
+                    // glass
+                    world.add(Sphere::new(center, 0.2, Material::Glass(Glass::new(1.5))));
+                    world.add(Sphere::new(center, 0.15, Material::Glass(Glass::new(1.5))));
+                }
+            }
+        }
+    }
+
+    let material1 = Material::Glass(Glass::new(1.5));
+    world.add(Sphere::new(Vec3::new(0.0, 1.0, 0.0), 1.0, material1));
+
+    let material2 = Material::Lambertian(Lambertian::new(Vec3::new(0.4, 0.2, 0.1)));
+    world.add(Sphere::new(Vec3::new(-4.0, 1.0, 0.0), 1.0, material2));
+    world.add(Sphere::new(Vec3::new(-4.0, 1.0, 0.0), 0.8, material2));
+
+    let material3 = Material::Metal(Metal::new(Vec3::new(0.7, 0.6, 0.5), 0.0));
+    world.add(Sphere::new(Vec3::new(4.0, 1.0, 0.0), 1.0, material3));
+
+    return world;
+}
+
 fn main()
 {
     //Image
-    const ASPECT_RATIO:f32 = 16.0 / 9.0;
-    const FOV: f32 = 75.0;
-    const IMAGE_WIDTH:i32 = 1920;
-    const IMAGE_HEIGHT:i32 = (IMAGE_WIDTH as f32 / ASPECT_RATIO) as i32;
-    const SAMPLES_PER_PIXEL: i32 = 100;
-    const MAX_DEPTH: i32 = 50;
+    Settings::load();
 
     //World
-    let mut world: HittableList = HittableList::new();
+    let world = random_scene();
     
-    let material_ground = Material::Lambertian(Lambertian::new(Vec3::new(0.8, 0.8, 0.0)));
-    let material_center = Material::Lambertian(Lambertian::new(Vec3::new(0.1, 0.2, 0.5)));
-    let material_left   = Material::Glass(Glass::new(1.5));
-    let material_right  = Material::Metal(Metal::new(Vec3::new(0.8, 0.6, 0.2), 0.0));
-
-    world.add(Sphere::new(Vec3::new(0.0,      -100.5,     -1.0),  100.0,  material_ground));
-    world.add(Sphere::new(Vec3::new(0.0,      0.0,        -1.0),  0.5,    material_center));
-    world.add(Sphere::new(Vec3::new(-1.0,     0.0,        -1.0),  0.5,    material_left));
-    world.add(Sphere::new(Vec3::new(-1.0,     0.0,        -1.0),  -0.4,   material_left));
-    world.add(Sphere::new(Vec3::new(1.0,      0.0,        -1.0),  0.5,    material_right));
-
     // Camera
     let mut camera = Camera::new();
-    camera.set_position(Vec3::new(150.0, -200.0, -100.0));
-    camera.set_rotation(Vec3::new(45.0, 45.0, 0.0));
+    camera.set_position(Vec3::new(5.0, 1.5, 3.0));
+    camera.set_rotation(Vec3::new(15.0, -45.0, 0.0));
     camera.set_scale(Vec3::new(1.0, 1.0, 1.0));
-    camera.set_aspect_ratio(ASPECT_RATIO);
-    camera.set_field_of_view(FOV);
-    camera.prepare_ray();
+    camera.set_camera_from_settings();
 
     //Render
-    camera.trace(world, IMAGE_WIDTH, IMAGE_HEIGHT, SAMPLES_PER_PIXEL, MAX_DEPTH)
+    camera.trace(world);
 }

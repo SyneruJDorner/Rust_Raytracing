@@ -21,17 +21,17 @@ impl Ray
         Ray { origin: origin, direction: direction, color: Vec3::zero(), dir_matrix: Matrix4x4::identity() }
     }
 
-    pub fn origin(self) -> Vec3
+    pub fn origin(&self) -> Vec3
     {
         return self.origin;
     }
 
-    pub fn direction(self) -> Vec3
+    pub fn direction(&self) -> Vec3
     {
         return self.direction;
     }
 
-    pub fn at(self, t: f32) -> Vec3
+    pub fn at(&self, t: f32) -> Vec3
     {
         return self.origin + t * self.direction;
     }
@@ -65,7 +65,7 @@ impl Ray
         }
 
         let unit_direction = Vec3::normalize(&r.direction());
-        let t = 0.5*(unit_direction.y + 1.0);
+        let t = 0.5 * (unit_direction.y + 1.0);
         let color_1 = Vec3::new(1.0, 1.0, 1.0);
         let color_2 = Vec3::new(0.5, 0.7, 1.0);
         let sky_color = (1.0 - t) * color_1 + t * color_2;

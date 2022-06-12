@@ -1,3 +1,4 @@
+use crate::settings::Settings;
 use crate::vec3::Vec3;
 use crate::ray::Ray;
 use crate::transform::Transform;
@@ -11,9 +12,8 @@ use map_3d::deg2rad;
 pub struct Camera
 {
     pub transform: Transform,
-    aspect_ratio: f32,
+    pub aspect_ratio: f32,
     pub fov: f32,
-    world_up: Vec3,
     pub ray: Ray
 }
 
@@ -27,7 +27,6 @@ impl Camera
             transform: Transform::new(),
             aspect_ratio:  degrees_to_radians(90.0),
             fov: degrees_to_radians(90.0),
-            world_up: Vec3::new(0.0, 1.0, 0.0),
             ray: Ray::new(Vec3::new(0.0, 0.0, 0.0), Vec3::new(0.0, 0.0, 0.0))
         }
     }
@@ -49,9 +48,19 @@ impl Camera
     }
 
     #[allow(dead_code)]
+    pub fn set_camera_from_settings(&mut self) -> Camera
+    {
+        self.fov = Settings::get_fov() as f32;
+        self.aspect_ratio = Settings::get_aspect_ratio();
+        self.prepare_ray();
+        return *self;
+    }
+
+    #[allow(dead_code)]
     pub fn set_field_of_view(&mut self, vfov: f32) -> Camera
     {
         self.fov = vfov;
+        self.prepare_ray();
         return *self;
     }
 
@@ -59,6 +68,7 @@ impl Camera
     pub fn set_aspect_ratio(&mut self, aspect_ratio: f32) -> Camera
     {
         self.aspect_ratio = aspect_ratio;
+        self.prepare_ray();
         return *self;
     }
     
@@ -66,6 +76,7 @@ impl Camera
     pub fn set_position(&mut self, position: Vec3) -> Camera
     {
         self.transform.set_position(position);
+        self.prepare_ray();
         return *self;
     }
 
@@ -73,6 +84,7 @@ impl Camera
     pub fn set_rotation(&mut self, rotation: Vec3) -> Camera
     {
         self.transform.set_rotation(rotation);
+        self.prepare_ray();
         return *self;
     }
 
@@ -80,30 +92,32 @@ impl Camera
     pub fn set_scale(&mut self, scale: Vec3) -> Camera
     {
         self.transform.set_scale(scale);
+        self.prepare_ray();
         return *self;
     }
 
     //Calculates the ray relative to the cameras position and rotation
-    pub fn trace(&mut self, world: HittableList, width: i32, height: i32, samples_per_pixel: i32, depth: i32)
+    pub fn trace(&mut self, world: HittableList)
     {
-        println!("P3\n{} {}\n255", width, height);
+        println!("P3\n{} {}\n255", Settings::get_image_width(), Settings::get_image_height());
 
-        for y in 0..height
+        for y in 0..Settings::get_image_height()
         {
-            for x in 0..width
+            for x in 0..Settings::get_image_width()
             {
                 let mut pixel_color = Vec3::new(0.0, 0.0, 0.0);
-                for _ in 0..samples_per_pixel
+                for _ in 0..Settings::get_samples_per_pixel()
                 {
                     let angle: f32 = (deg2rad((self.fov * 0.5).into()) as f64).tan() as f32;
-                    let x = (2.0 * (x as f32 + 0.5) / width as f32 - 1.0) * self.aspect_ratio * angle;
-                    let y = (1.0 - 2.0 * (y as f32 + 0.5) / height as f32) * angle;
+                    let x = (2.0 * (x as f32 + 0.5) / Settings::get_image_width() as f32 - 1.0) * self.aspect_ratio * angle;
+                    let y = (1.0 - 2.0 * (y as f32 + 0.5) / Settings::get_image_height() as f32) * angle;
                     let dir: Vec3 = self.ray.dir_matrix.multiply_dir_matrix(Vec3::new(x, y, -1.0)).normalize();
                     self.ray.direction = dir;
-                    let new_color = pixel_color + Ray::calcaulte_ray(&self.ray, &world, depth);
+                    self.ray.origin = self.transform.position;
+                    let new_color = pixel_color + Ray::calcaulte_ray(&self.ray, &world, Settings::get_max_depth());
                     pixel_color = new_color;
                 }
-                write_color(pixel_color, samples_per_pixel);
+                write_color(pixel_color, Settings::get_samples_per_pixel());
             }
         }
     }
