@@ -11,6 +11,7 @@ This project is to test my knowledge in rust, by building on top of my knowledge
 - Moving and rotating the camera using Vector3.
 - Materials: Albedo, Metal, Glass.
 - Anti-Aliasing.
+- Settings (though settings.ini file) 
 <br/>
 
 **Need to Implement:**<br/>
@@ -46,7 +47,4 @@ This project is to test my knowledge in rust, by building on top of my knowledge
 <br/>
 <br/>
 
-![Prefab](https://github.com/justindd1994/Rust_Raytracing/blob/master/images/ray-tracing-demo.png)<br/>
-![Prefab](https://github.com/justindd1994/Rust_Raytracing/blob/master/images/ray-tracing-demo-2.png)<br/>
-![Prefab](https://github.com/justindd1994/Rust_Raytracing/blob/master/images/ray-tracing-demo-3.png)<br/>
-![Prefab](https://github.com/justindd1994/Rust_Raytracing/blob/master/images/ray-tracing-demo-4.png)<br/>
+![Prefab](https://github.com/justindd1994/Rust_Raytracing/blob/master/images/ray-tracing-demo-5.png)<br/>
