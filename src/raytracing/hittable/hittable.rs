@@ -8,13 +8,15 @@ pub struct HitRecord
     pub normal: Vec3,
     pub distance: f32,
     pub front_face: bool,
-    pub material: Material
+    pub material: Material,
+    pub u: f32,
+    pub v: f32
 }
 
 impl HitRecord
 {
     #[allow(dead_code)]
-    pub fn set_face_normal(mut self, r: &Ray, outward_normal: &Vec3)
+    pub fn set_face_normal(&mut self, r: &Ray, outward_normal: &Vec3)
     {
         let front_face = Vec3::dot(&r.direction(), outward_normal) < 0.0;
 
@@ -32,4 +34,5 @@ impl HitRecord
 pub trait Hittable
 {
     fn hit(&self, ray: &Ray, t_min: f32, t_max: f32) -> Option<HitRecord>;
+    fn hit_aabb_bounds(&self, ray: &Ray) -> bool;
 }

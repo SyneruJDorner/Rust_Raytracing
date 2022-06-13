@@ -16,8 +16,9 @@ https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-generating-
 
 #[path = "settings/settings.rs"] mod settings;
 #[path = "math/constants/constants.rs"] mod constants;
-#[path = "math/vec3/vec3.rs"] mod vec3;
 #[path = "math/matrix/matrix4x4.rs"] mod matrix4x4;
+#[path = "math/vec3/vec3.rs"] mod vec3;
+#[path = "math/aabb/aabb.rs"] mod aabb;
 #[path = "math/transform/transform.rs"] mod transform;
 #[path = "math/utils/utils.rs"] mod utils;
 #[path = "raytracing/color/color.rs"] mod color;
@@ -26,6 +27,7 @@ https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-generating-
 #[path = "raytracing/hittable/hittablelist.rs"] mod hittablelist;
 #[path = "raytracing/hittable/hittable.rs"] mod hittable;
 #[path = "raytracing/shapes/sphere.rs"] mod sphere;
+#[path = "raytracing/shapes/plane.rs"] mod plane;
 #[path = "raytracing/material/material.rs"] mod material;
 #[path = "raytracing/material/submaterials/lamertian.rs"] mod lamberian;
 #[path = "raytracing/material/submaterials/metal.rs"] mod metal;
@@ -36,14 +38,18 @@ use vec3::Vec3 as Vec3;
 use camera::Camera as Camera;
 use hittablelist::HittableList as HittableList;
 use sphere::Sphere as Sphere;
+use plane::Plane as Plane;
 use material::Material as Material;
 use material::submaterials::lamertian::Lambertian as Lambertian;
 #[allow(unused_imports)]
 use material::submaterials::metal::Metal as Metal;
 #[allow(unused_imports)]
 use material::submaterials::glass::Glass as Glass;
+#[allow(unused_imports)]
+use material::submaterials::emmision::Emmision as Emmision;
 
-fn random_scene() -> HittableList
+/*
+fn random_sphere_demo() -> HittableList
 {
     let mut world: HittableList = HittableList::new();
     
@@ -94,6 +100,32 @@ fn random_scene() -> HittableList
 
     return world;
 }
+*/
+
+fn lighting_demo() -> HittableList
+{
+    let mut world: HittableList = HittableList::new();
+   
+    let ground_material = Material::Lambertian(Lambertian::new(Vec3::new(0.5, 0.5, 0.5)));
+    world.add(Box::new(Sphere::new(Vec3::new(0.0,      -1000.0,     0.0),  1000.0,  ground_material)));
+
+    let glass_mat = Material::Glass(Glass::new(1.5));
+    world.add(Box::new(Sphere::new(Vec3::new(0.0, 1.0, 0.0), 1.0, glass_mat)));
+
+    let albedo_mat = Material::Lambertian(Lambertian::new(Vec3::new(0.4, 0.2, 0.1)));
+    world.add(Box::new(Sphere::new(Vec3::new(-4.0, 1.0, 0.0), 1.0, albedo_mat)));
+
+    let metal_mat = Material::Metal(Metal::new(Vec3::new(0.7, 0.6, 0.5), 0.0));
+    world.add(Box::new(Sphere::new(Vec3::new(4.0, 1.0, 0.0), 1.0, metal_mat)));
+
+    let difflight = Material::Emmition(Emmision::new(Vec3::new(1.0, 1.0, 1.0)));
+    let mut transform_plane = transform::Transform::new();
+    transform_plane.set_position(vec3::Vec3::new(-2.0, 2.0, -5.0));
+    //transform_plane.set_rotation(vec3::Vec3::new(45.0, 45.0, 0.0));
+    transform_plane.set_scale(vec3::Vec3::new(1.0, 1.0, 1.0));
+    world.add(Box::new(Plane::new(transform_plane, 8.0, 8.0, difflight)));
+    return world;
+}
 
 fn main()
 {
@@ -101,7 +133,8 @@ fn main()
     Settings::load();
 
     //World
-    let world = random_scene();
+    //let world = random_sphere_demo();
+    let world = lighting_demo();
     
     // Camera
     let mut camera = Camera::new();

@@ -2,6 +2,7 @@ use crate::vec3::Vec3;
 use crate::ray::Ray;
 use crate::hittable::HitRecord;
 use crate::material::Scatterable;
+use crate::material::Emmitable;
 
 #[derive(Debug, Clone, Copy)]
 pub struct Metal
@@ -38,5 +39,14 @@ impl Scatterable for Metal
         {
             return None;
         }
+    }
+}
+
+impl Emmitable for Metal
+{
+    #[allow(unused_variables)]
+    fn emitted(&self, ray: &Ray, hit_record: &HitRecord) -> Vec3
+    {
+        return Vec3::new(0.0, 0.0, 0.0);
     }
 }

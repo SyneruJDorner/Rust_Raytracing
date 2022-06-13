@@ -114,7 +114,8 @@ impl Camera
                     let dir: Vec3 = self.ray.dir_matrix.multiply_dir_matrix(Vec3::new(x, y, -1.0)).normalize();
                     self.ray.direction = dir;
                     self.ray.origin = self.transform.position;
-                    let new_color = pixel_color + Ray::calcaulte_ray(&self.ray, &world, Settings::get_max_depth());
+                    let backgorund_colour = Vec3::new(0.0, 0.0, 0.0);
+                    let new_color = pixel_color + Ray::calcaulte_ray(&self.ray, &backgorund_colour, &world, Settings::get_max_depth());
                     pixel_color = new_color;
                 }
                 write_color(pixel_color, Settings::get_samples_per_pixel());

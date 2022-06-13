@@ -4,6 +4,7 @@ use crate::vec3::Vec3;
 use crate::ray::Ray;
 use crate::hittable::HitRecord;
 use crate::material::Scatterable;
+use crate::material::Emmitable;
 use crate::utils::random_float;
 
 #[derive(Debug, Clone, Copy)]
@@ -63,4 +64,13 @@ fn reflectance(cosine: f32, ref_idx: f32) -> f32
     let mut r0 = (1.0 - ref_idx) / (1.0 + ref_idx);
     r0 = r0 * r0;
     return r0 + (1.0 - r0) * (1.0 - cosine).powi(5)
+}
+
+impl Emmitable for Glass
+{
+    #[allow(unused_variables)]
+    fn emitted(&self, ray: &Ray, hit_record: &HitRecord) -> Vec3
+    {
+        return Vec3::new(0.0, 0.0, 0.0);
+    }
 }
