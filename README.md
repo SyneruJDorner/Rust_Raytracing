@@ -7,21 +7,21 @@ This project is to test my knowledge in rust, by building on top of my knowledge
 <br/>
 
 **Currently working features:**<br/>
-- Basic raytracing of spheres.
-- Moving and rotating the camera using Vector3.
-- Materials: Albedo, Metal, Glass.
+- Basic raytracing of spheres and planes.
+- Moving and rotating the camera using vector3.
+- Materials: Albedo, Metal, Glass, Emission.
+- Basic lighting and shadows.
 - Anti-Aliasing.
 - Settings (though settings.ini file) 
 <br/>
 
 **Need to Implement:**<br/>
-- Lights
-- Shadows from light sources.
+- Different light types.
+- Moving, Rotation and Scaling shapes and models.
 - Different shapes.
 - Loading textures.
 - Loading Meshes/Models.
 - Look into glTF { https://www.khronos.org/gltf/ }.
-- Moving, Rotation and Scaling shapes and models.
 - Threading and Multi-Core Processing.
 <br/>
 
