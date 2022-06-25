@@ -1,20 +1,37 @@
-use crate::vec3::Vec3;
-use crate::ray::Ray;
-use crate::hittable::HitRecord;
-use crate::material::Scatterable;
-use crate::material::Emmitable;
+use crate::Vector3;
+use crate::Color;
+use crate::Ray;
+use crate::HitRecord;
+use crate::Scatterable;
+use crate::Emmitable;
+use crate::Normalable;
 
 #[derive(Debug, Clone, Copy)]
 pub struct Metal
 {
-    pub albedo: Vec3,
-    pub fuzz: f32
+    pub albedo: Color,
+    pub fuzz: f64
 }
 
 impl Metal
 {
     #[allow(dead_code)]
-    pub fn new(albedo: Vec3, mut fuzz: f32) -> Metal
+    pub fn new(r: f64, g: f64, b: f64, mut fuzz: f64) -> Metal
+    {
+        if fuzz > 1.0
+        {
+            fuzz = 1.0;
+        }
+
+        Metal
+        {
+            albedo: Color::new(r, g, b),
+            fuzz: fuzz
+        }
+    }
+
+    #[allow(dead_code)]
+    pub fn set(albedo: Color, mut fuzz: f64) -> Metal
     {
         if fuzz > 1.0
         {
@@ -26,12 +43,12 @@ impl Metal
 
 impl Scatterable for Metal
 {
-    fn scatter(&self, ray: &Ray, hit_record: &HitRecord) -> Option<(Ray, Vec3)>
+    fn scatter(&self, hit_record: HitRecord) -> Option<(Ray, Color)>
     {
-        let reflected = Vec3::reflect(&ray.direction().normalize(), &hit_record.normal);
-        let scattered_ray = Ray::new(hit_record.point, reflected + self.fuzz * Vec3::random_in_unit_sphere());
+        let reflected = Vector3::reflect(hit_record.direction, hit_record.normal);
+        let scattered_ray = Ray::new(hit_record.hit_point, reflected + self.fuzz * Vector3::random_in_unit_sphere(), hit_record.uuid);
         let attenuation = self.albedo;
-        if Vec3::dot(&scattered_ray.direction, &hit_record.normal) > 0.0
+        if Vector3::dot(scattered_ray.direction, hit_record.normal) > 0.0
         {
             return Some((scattered_ray, attenuation));
         }
@@ -45,8 +62,17 @@ impl Scatterable for Metal
 impl Emmitable for Metal
 {
     #[allow(unused_variables)]
-    fn emitted(&self, ray: &Ray, hit_record: &HitRecord) -> Vec3
+    fn emitted(&self, hit_record: HitRecord) ->  Option<Color>
     {
-        return Vec3::new(0.0, 0.0, 0.0);
+        return Some(Color::new(0.0, 0.0, 0.0));
+    }
+}
+
+impl Normalable for Metal
+{
+    #[allow(unused_variables)]
+    fn normals(&self, hit_record: HitRecord) -> Option<Color>
+    {
+        return Some(hit_record.normal.to_color());
     }
 }

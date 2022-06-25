@@ -5,12 +5,13 @@ use configparser::ini::Ini;
 #[allow(non_snake_case)]
 pub struct Settings
 {
-    pub ASPECT_RATIO: f32,
-    pub FOV: i32,
-    pub IMAGE_WIDTH: i32,
-    pub IMAGE_HEIGHT: i32,
-    pub SAMPLES_PER_PIXEL: i32,
-    pub MAX_DEPTH: i32
+    pub ASPECT_RATIO: f64,
+    pub FOV: u32,
+    pub IMAGE_WIDTH: u32,
+    pub IMAGE_HEIGHT: u32,
+    pub SAMPLES_PER_PIXEL: u32,
+    pub MAX_DEPTH: u32,
+    pub DEBUG_NORMALS: bool
 }
 
 impl Settings
@@ -24,12 +25,13 @@ impl Settings
         {
             Ok(_map) =>
             {
-                let fov = config.get("SCREEN", "FOV").unwrap().parse::<i32>().unwrap();
-                let image_width = config.get("SCREEN", "IMAGE_WIDTH").unwrap().parse::<i32>().unwrap();
-                let image_height = config.get("SCREEN", "IMAGE_HEIGHT").unwrap().parse::<i32>().unwrap();
-                let samples_per_pixel = config.get("SCREEN", "SAMPLES_PER_PIXEL").unwrap().parse::<i32>().unwrap();
-                let max_depth = config.get("SCREEN", "MAX_DEPTH").unwrap().parse::<i32>().unwrap();
-                let aspect_ratio = (image_width as f32 / image_height as f32) as f32;
+                let fov = config.get("SCREEN", "FOV").unwrap().parse::<u32>().unwrap();
+                let image_width = config.get("SCREEN", "IMAGE_WIDTH").unwrap().parse::<u32>().unwrap();
+                let image_height = config.get("SCREEN", "IMAGE_HEIGHT").unwrap().parse::<u32>().unwrap();
+                let samples_per_pixel = config.get("SCREEN", "SAMPLES_PER_PIXEL").unwrap().parse::<u32>().unwrap();
+                let max_depth = config.get("SCREEN", "MAX_DEPTH").unwrap().parse::<u32>().unwrap();
+                let aspect_ratio = (image_width as f64 / image_height as f64) as f64;
+                let debug_normals = config.get("DEBUG", "DEBUG_NORMALS").unwrap().parse::<bool>().unwrap();
 
                 let settings = Settings {
                     ASPECT_RATIO: aspect_ratio,
@@ -37,7 +39,8 @@ impl Settings
                     IMAGE_WIDTH: image_width,
                     IMAGE_HEIGHT: image_height,
                     SAMPLES_PER_PIXEL: samples_per_pixel,
-                    MAX_DEPTH: max_depth
+                    MAX_DEPTH: max_depth,
+                    DEBUG_NORMALS: debug_normals
                 };
                 settings.make_current();
             }
@@ -54,34 +57,39 @@ impl Settings
         return CURRENT_SETTING.with(|c| c.read().unwrap().clone())
     }
 
-    pub fn get_fov() -> f32
+    pub fn get_fov() -> f64
     {
-        return Settings::current().FOV as f32
+        return Settings::current().FOV as f64
     }
 
-    pub fn get_image_width() -> i32
+    pub fn get_image_width() -> u32
     {
         return Settings::current().IMAGE_WIDTH
     }
 
-    pub fn get_image_height() -> i32
+    pub fn get_image_height() -> u32
     {
         return Settings::current().IMAGE_HEIGHT
     }
 
-    pub fn get_samples_per_pixel() -> i32
+    pub fn get_samples_per_pixel() -> u32
     {
         return Settings::current().SAMPLES_PER_PIXEL
     }
 
-    pub fn get_max_depth() -> i32
+    pub fn get_max_depth() -> u32
     {
         return Settings::current().MAX_DEPTH
     }
 
-    pub fn get_aspect_ratio() -> f32
+    pub fn get_aspect_ratio() -> f64
     {
         return Settings::current().ASPECT_RATIO
+    }
+
+    pub fn get_debug_normals() -> bool
+    {
+        return Settings::current().DEBUG_NORMALS
     }
 
     fn make_current(self)

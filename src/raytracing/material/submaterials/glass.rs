@@ -1,22 +1,25 @@
 use libm::fmin;
 
-use crate::vec3::Vec3;
-use crate::ray::Ray;
-use crate::hittable::HitRecord;
-use crate::material::Scatterable;
-use crate::material::Emmitable;
-use crate::utils::random_float;
+use crate::Point;
+use crate::Vector3;
+use crate::Color;
+use crate::Ray;
+use crate::HitRecord;
+use crate::Scatterable;
+use crate::Emmitable;
+use crate::random_float;
+use crate::Normalable;
 
 #[derive(Debug, Clone, Copy)]
 pub struct Glass
 {
-    pub refract_index: f32
+    pub refract_index: f64
 }
 
 impl Glass
 {
     #[allow(dead_code)]
-    pub fn new(refract_index: f32) -> Glass
+    pub fn new(refract_index: f64) -> Glass
     {
         Glass { refract_index: refract_index }
     }
@@ -24,42 +27,41 @@ impl Glass
 
 impl Scatterable for Glass
 {
-    fn scatter(&self, ray: &Ray, hit_record: &HitRecord) -> Option<(Ray, Vec3)>
+    fn scatter(&self, hit_record: HitRecord) -> Option<(Ray, Color)>
     {
-        let attenuation = Vec3::new(1.0, 1.0, 1.0);
-        let refraction_ratio;
+        let attenuation = Color::new(1.0, 1.0, 1.0);
+        let direction = hit_record.direction;
+        let mut normal = hit_record.normal;
+        let mut refraction_ratio = self.refract_index;
+        let inside = Vector3::dot(direction, normal) < 0.0;
 
-        if hit_record.front_face
+        if inside
         {
             refraction_ratio = 1.0 / self.refract_index;
+            normal = -normal;
         }
-        else
-        {
-            refraction_ratio = self.refract_index;
-        }
-
-        let unit_direction = ray.direction().normalize();
-        let cos_theta = fmin(Vec3::dot(&Vec3::inverse(&unit_direction), &hit_record.normal) as f64, 1.0) as f32;
+        
+        let ray_origin: Point = hit_record.hit_point + 0.0001 * normal;
+        let cos_theta = fmin(Vector3::dot(direction, normal) as f64, 1.0) as f64;
         let sin_theta = (1.0 - cos_theta * cos_theta).sqrt();
+        let cannot_refract = refraction_ratio * sin_theta < 0.0;
 
-        let cannot_refract = refraction_ratio * sin_theta > 1.0;
-        let direction: Vec3;
-
-        if cannot_refract || reflectance(cos_theta, refraction_ratio) > random_float(0.0, 1.0)
+        if reflectance(cos_theta, refraction_ratio) > random_float(0.0, 1.0) || cannot_refract
         {
-            direction = Vec3::reflect(&unit_direction, &hit_record.normal);
-        }
-        else
-        {
-            direction = Vec3::refract(&unit_direction, &hit_record.normal, refraction_ratio);
+            //Handle Reflection
+            let scatter_direction = Vector3::reflect(direction, normal);
+            let scattered_ray = Ray::new(ray_origin, scatter_direction, hit_record.uuid);
+            return Some((scattered_ray, attenuation));
         }
 
-        let scattered_ray = Ray::new(hit_record.point, direction);
+        //Handle Refraction
+        let scatter_direction = Vector3::refract(direction, -normal, refraction_ratio);
+        let scattered_ray = Ray::new(ray_origin, scatter_direction, hit_record.uuid);
         return Some((scattered_ray, attenuation));
     }
 }
 
-fn reflectance(cosine: f32, ref_idx: f32) -> f32
+fn reflectance(cosine: f64, ref_idx: f64) -> f64
 {
     let mut r0 = (1.0 - ref_idx) / (1.0 + ref_idx);
     r0 = r0 * r0;
@@ -69,8 +71,17 @@ fn reflectance(cosine: f32, ref_idx: f32) -> f32
 impl Emmitable for Glass
 {
     #[allow(unused_variables)]
-    fn emitted(&self, ray: &Ray, hit_record: &HitRecord) -> Vec3
+    fn emitted(&self, hit_record: HitRecord) -> Option<Color>
     {
-        return Vec3::new(0.0, 0.0, 0.0);
+        return Some(Color::new(0.0, 0.0, 0.0));
+    }
+}
+
+impl Normalable for Glass
+{
+    #[allow(unused_variables)]
+    fn normals(&self, hit_record: HitRecord) -> Option<Color>
+    {
+        return Some(hit_record.normal.to_color());
     }
 }

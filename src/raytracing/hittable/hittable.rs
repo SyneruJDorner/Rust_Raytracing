@@ -1,38 +1,41 @@
-use crate::vec3::Vec3;
-use crate::ray::Ray;
-use crate::material::Material;
+use crate::Vector3;
+use crate::Point;
+use crate::Ray;
+use crate::Material;
+use uuid::Uuid;
 
+#[derive(Debug, Clone, Copy)]
 pub struct HitRecord
 {
-    pub point: Vec3,
-    pub normal: Vec3,
-    pub distance: f32,
-    pub front_face: bool,
-    pub material: Material,
-    pub u: f32,
-    pub v: f32
+    pub uuid: Uuid,
+    pub distance: f64,
+    
+    pub hit_point: Point,
+    pub direction: Vector3,
+    pub normal: Vector3,
+
+    pub material: Material
 }
 
 impl HitRecord
 {
-    #[allow(dead_code)]
-    pub fn set_face_normal(&mut self, r: &Ray, outward_normal: &Vec3)
+    pub fn new(uuid: Uuid, distance: f64, hit_point: Point, direction: Vector3, normal: Vector3, material: Material) -> HitRecord
     {
-        let front_face = Vec3::dot(&r.direction(), outward_normal) < 0.0;
+        return HitRecord
+        {
+            uuid: uuid,
+            hit_point: hit_point,
+            distance: distance,
+            direction: direction,
+            normal: normal,
 
-        if front_face == true
-        {
-            self.normal = Vec3::inverse(&outward_normal);
-        }
-        else
-        {
-            self.normal = *outward_normal;
-        }
+            material: material
+        };
     }
 }
 
 pub trait Hittable
 {
-    fn hit(&self, ray: &Ray, t_min: f32, t_max: f32) -> Option<HitRecord>;
-    fn hit_aabb_bounds(&self, ray: &Ray) -> bool;
+    fn hit(&self, world_ray: Ray) -> Option<HitRecord>;
+    //fn hit_aabb_bounds(&self, ray: &Ray) -> bool;
 }

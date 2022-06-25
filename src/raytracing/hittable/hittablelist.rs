@@ -1,18 +1,20 @@
-use crate::ray::Ray;
-use crate::hittable::Hittable;
-use crate::hittable::HitRecord;
-use crate::sphere::Sphere;
+use crate::Ray;
+use crate::Hittable;
+use crate::HitRecord;
 
 pub struct HittableList
 {
-    objects: Vec<Box<dyn Hittable>>,
+    pub objects: Vec<Box<dyn Hittable>>,
 }
 
 impl HittableList
 {
     pub fn new() -> HittableList
     {
-        HittableList { objects: Vec::new() }
+        HittableList
+        {
+            objects: Vec::new(),
+        }
     }
 
     #[allow(dead_code)]
@@ -21,64 +23,59 @@ impl HittableList
         self.objects.clear();
     }
 
+    #[allow(dead_code)]
     pub fn add(&mut self, object: Box<dyn Hittable>)
     {
         self.objects.push(object);
-    }
-
-    pub fn hit_closest_object(&self, ray: &Ray, t_min: f32, t_max: f32) -> Option<HitRecord>
-    {
-        let mut closest_so_far: f32 = t_max;
-        let mut current_object: Option<HitRecord> = None;
-
-        //loop over objects and check which one hit is the closest
-        for object in &self.objects
-        {
-            //If the ray intersected the AABB bounds of the object
-            if object.hit_aabb_bounds(ray) == true
-            {
-                let hit = object.hit(ray, t_min, closest_so_far);
-                if hit.is_some()
-                {
-                    let current_hit_distance = hit.as_ref().unwrap().distance;
-                    if current_hit_distance < closest_so_far
-                    {
-                        closest_so_far = current_hit_distance;
-                        current_object = hit;
-                    }
-                }
-            }
-        }
-
-        return current_object;
     }
 }
 
 impl Hittable for HittableList
 {
-    fn hit(&self, ray: &Ray, t_min: f32, t_max: f32) -> Option<HitRecord>
+    fn hit(&self, ray: Ray) -> Option<HitRecord>
     {
-        let mut result = None;
-        let mut closest_so_far = t_max;
+        let mut current_object: Vec<HitRecord> = Vec::new();
 
+        //loop over objects and check which one hit is the closest
         for object in &self.objects
         {
-            if let Some(hit) = object.hit(&ray, t_min, closest_so_far)
-            {
-                closest_so_far = hit.distance;
-                result = Some(hit);
-            }
+            //If the ray intersected the AABB bounds of the object
+            //if object.hit_aabb_bounds(ray) == true
+            //{
+                let intersections = object.hit(ray);
+                if intersections.is_some()
+                {
+                    let hit_objects = intersections.unwrap();
+
+                    if ray.previous_uuid == hit_objects.uuid && hit_objects.distance < 0.1
+                    {
+                        continue;
+                    }
+
+                    current_object.push(hit_objects);
+                }
+            //}
         }
 
-        return result;
-    }
+        //Determine if we hit anything, is so, sort the hit objects by distance and return
+        if current_object.len() > 0
+        {
+            for i in 0..current_object.len()
+            {
+                for j in i..current_object.len()
+                {
+                    if current_object[i].distance > current_object[j].distance
+                    {
+                        let temp = current_object[i];
+                        current_object[i] = current_object[j];
+                        current_object[j] = temp;
+                    }
+                }
+            }
 
-    fn hit_aabb_bounds(&self, ray: &Ray) -> bool
-    {
-        // for object in &self.objects
-        // {
-        //     return object.hit_aabb_bounds(ray)
-        // }
-        return true;
+            return Some(current_object[0]);
+        }
+
+        return None;
     }
 }

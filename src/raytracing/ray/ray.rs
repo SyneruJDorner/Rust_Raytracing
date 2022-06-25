@@ -1,82 +1,95 @@
-use crate::matrix4x4::Matrix4x4;
-use crate::vec3::Vec3;
-use crate::hittablelist::HittableList;
-use crate::constants::INFINITY;
-use crate::material::Scatterable;
-use crate::material::Emmitable;
+use crate::Settings;
+use crate::Matrix;
+use crate::Point;
+use crate::Vector3;
+use crate::Color;
+use crate::Hittable;
+use crate::HittableList;
+use crate::{Scatterable, Emmitable, Normalable};
+use uuid::Uuid;
 
-#[derive(Copy, Clone, Debug, PartialEq, PartialOrd)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Ray
 {
-    pub origin: Vec3,
-    pub direction: Vec3,
-    pub color: Vec3,
-    pub dir_matrix: Matrix4x4,
+    pub origin: Point,
+    pub direction: Vector3,
+    pub color: Color,
+    pub previous_uuid: Uuid
 }
 
 impl Ray
 {
-    #[allow(dead_code)]
-    pub fn new(origin: Vec3, direction: Vec3) -> Ray
+    pub fn new(origin: Point, direction: Vector3, previous_uuid: Uuid) -> Ray
     {
-        Ray { origin: origin, direction: direction, color: Vec3::zero(), dir_matrix: Matrix4x4::identity() }
+        Ray
+        {
+            origin,
+            direction,
+            color: Color::new(0.0, 0.0, 0.0),
+            previous_uuid: previous_uuid
+        }
     }
 
-    pub fn origin(&self) -> Vec3
-    {
-        return self.origin;
-    }
-
-    pub fn direction(&self) -> Vec3
-    {
-        return self.direction;
-    }
-
-    pub fn at(&self, t: f32) -> Vec3
+    pub fn at(&self, t: f64) -> Point
     {
         return self.origin + t * self.direction;
     }
 
-    pub fn set_dir_matrix(&mut self, dir_matrix: Matrix4x4)
+    pub fn transform(&self, m: Matrix) -> Ray
     {
-        self.dir_matrix = dir_matrix;
+        Ray
+        {
+            origin: m * self.origin,
+            direction: m * self.direction,
+            color: self.color,
+            previous_uuid: self.previous_uuid
+        }
     }
 
-    pub fn calcaulte_ray(ray: &Ray, background: &Vec3, world: &HittableList, depth: i32)  -> Vec3
+    #[allow(dead_code)]
+    pub fn calcaulte_ray(ray: Ray, world: &HittableList, depth: u32)  -> Color
     {
-        if depth <= 0
+        if depth == 0
         {
-            return Vec3::new(0.0, 0.0, 0.0);
+            return Color::new(0.0, 0.0, 0.0);
         }
+
+        let hit = world.hit(ray);
         
-        let closest_object = world.hit_closest_object(ray, 0.001, INFINITY as f32);
-        
-        //Handle all reflections
-        if closest_object.is_some()
+        if hit.is_some()
         {
-            let hit_obj = closest_object.unwrap();
-            let scatter = hit_obj.material.scatter(&ray, &hit_obj);
-            let emitted = hit_obj.material.emitted(&ray, &hit_obj);
+            let closest_hit = hit.unwrap();
+            let scatter = closest_hit.material.scatter(closest_hit);//.scatter(&ray, &closest_hit);
+            let emitted = closest_hit.material.emitted(closest_hit);
+            let emmittion = emitted.unwrap();
+
+            if Settings::get_debug_normals() == true
+            {
+                let normals = closest_hit.material.normals(closest_hit);
+                if normals.is_some()
+                {
+                    let normal_color = normals.unwrap();
+                    return normal_color.rgb();
+                }
+            }
+
             if scatter.is_some()
             {
-                let scattered = scatter.unwrap().0;
+                let scattered_ray = scatter.unwrap().0;
                 let attenuation = scatter.unwrap().1;
-                // let emitted = rec.mat_ptr->emitted(rec.u, rec.v, rec.p);
+                let scattered = Ray::calcaulte_ray(scattered_ray, world, depth - 1);
                 
-                return emitted + attenuation * Ray::calcaulte_ray(&scattered, background, world, depth - 1);
+                return emmittion + attenuation * scattered;
             }
-            
-            //return emitted;
-            return Vec3::new(1.0, 1.0, 1.0);
+
+            return emmittion;
         }
 
-        return *background;
-
-        // let unit_direction = Vec3::normalize(&ray.direction());
-        // let t = 0.5 * (unit_direction.y + 1.0);
-        // let color_1 = Vec3::new(1.0, 1.0, 1.0);
-        // let color_2 = Vec3::new(0.5, 0.7, 1.0);
-        // let sky_color = (1.0 - t) * color_1 + t * color_2;
-        // return sky_color;
+        let unit_direction = Vector3::normalize(&ray.direction);
+        let t = 0.5 * (unit_direction.y() + 1.0);
+        let color_1 = Color::new(1.0, 1.0, 1.0);
+        let color_2 = Color::new(0.5, 0.7, 1.0);
+        let sky_color = (1.0 - t) * color_1 + t * color_2;
+        return sky_color;
     }
 }

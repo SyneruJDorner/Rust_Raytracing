@@ -1,20 +1,30 @@
 
-use crate::vec3::Vec3;
-use crate::ray::Ray;
-use crate::hittable::HitRecord;
-use crate::material::Scatterable;
-use crate::material::Emmitable;
+use crate::Color;
+use crate::Ray;
+use crate::HitRecord;
+use crate::Scatterable;
+use crate::Emmitable;
+use crate::Normalable;
 
 #[derive(Debug, Clone, Copy)]
 pub struct Emmision
 {
-    pub emit: Vec3
+    pub emit: Color
 }
 
 impl Emmision
 {
     #[allow(dead_code)]
-    pub fn new(color: Vec3) -> Emmision
+    pub fn new(r: f64, g: f64, b: f64) -> Emmision
+    {
+        Emmision
+        {
+            emit: Color::new(r, g, b)
+        }
+    }
+
+    #[allow(dead_code)]
+    pub fn set(color: Color) -> Emmision
     {
         Emmision
         {
@@ -26,7 +36,7 @@ impl Emmision
 impl Scatterable for Emmision
 {
     #[allow(unused_variables)]
-    fn scatter(&self, ray: &Ray, hit_record: &HitRecord) -> Option<(Ray, Vec3)>
+    fn scatter(&self, hit_record: HitRecord) -> Option<(Ray, Color)>
     {
         return None;
     }
@@ -35,8 +45,17 @@ impl Scatterable for Emmision
 impl Emmitable for Emmision
 {
     #[allow(unused_variables)]
-    fn emitted(&self, ray: &Ray, hit_record: &HitRecord) -> Vec3
+    fn emitted(&self, hit_record: HitRecord) -> Option<Color>
     {
-        return Vec3::new(0.0, 0.0, 0.0);
+        return Some(self.emit);
+    }
+}
+
+impl Normalable for Emmision
+{
+    #[allow(unused_variables)]
+    fn normals(&self, hit_record: HitRecord) -> Option<Color>
+    {
+        return Some(hit_record.normal.to_color());
     }
 }

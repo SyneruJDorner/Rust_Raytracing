@@ -44,6 +44,10 @@ This project is to test my knowledge in rust, by building on top of my knowledge
 - https://github.com/dps/rust-raytracer
 - https://www.andre-gaschler.com/rotationconverter/ { Used to make sure Matrix calcaulations are correct }
 - https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-generating-camera-rays/generating-camera-rays { Matching up rays direction with camera's direction }
+- https://www.codersblock.org/blog/multiplayer-fps-part-7
+- https://github.com/isaacery/DistributedRaytracer/blob/bf05f148d364afd7eef274bcdf5bbd3ead6c1b24/RayTracer/core/RayTracer.cpp { Working with world space conversion }
+- https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-generating-camera-rays/generating-camera-rays { Working with world space conversion }
+- https://www.youtube.com/watch?v=uRJCi0dlU4U { Working with Sheering, Scaling, Rotation and Position }
 <br/>
 <br/>
 

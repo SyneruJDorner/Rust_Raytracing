@@ -1,20 +1,26 @@
-use crate::settings::Settings;
-use crate::vec3::Vec3;
-use crate::ray::Ray;
-use crate::transform::Transform;
-use crate::hittablelist::HittableList;
-use crate::color::write_color;
-use crate::utils::degrees_to_radians;
+use uuid::Uuid;
+
+use crate::Settings;
+use crate::random_float;
+use crate::Vector3;
+use crate::Color;
+use crate::Ray;
+use crate::Transform;
+use crate::HittableList;
 
 use map_3d::deg2rad;
 
-#[derive(Copy, Clone, Debug, PartialEq, PartialOrd)]
+#[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Camera
 {
+    pub height: u32,
+    pub width: u32,
+    pub pixel_size: f64,
     pub transform: Transform,
-    pub aspect_ratio: f32,
-    pub fov: f32,
-    pub ray: Ray
+    pub aspect_ratio: f64,
+    pub fov: f64,
+    pub half_width: f64,
+    pub half_height: f64
 }
 
 impl Camera
@@ -22,80 +28,70 @@ impl Camera
     #[allow(dead_code)]
     pub fn new() -> Camera
     {
-        Camera 
+        let width = Settings::get_image_width();
+        let height = Settings::get_image_height();
+        let fov = 90.0;
+        let angle: f64 = (deg2rad((fov * 0.5).into()) as f64).tan() as f64;
+        let aspect_ratio = (width as f64) / (height as f64);
+        let half_width = if aspect_ratio >= 1.0 { angle } else { angle * aspect_ratio };
+        let half_height = if aspect_ratio >= 1.0 { angle / aspect_ratio } else { angle };
+        let pixel_size = (half_width * 2.0) / height as f64;
+        let transform = Transform::new();
+
+        let mut camera = Camera 
         {
-            transform: Transform::new(),
-            aspect_ratio:  degrees_to_radians(90.0),
-            fov: degrees_to_radians(90.0),
-            ray: Ray::new(Vec3::new(0.0, 0.0, 0.0), Vec3::new(0.0, 0.0, 0.0))
-        }
+            height: height,
+            width: width,
+            pixel_size: pixel_size,
+            transform: transform,
+            aspect_ratio:  aspect_ratio,
+            fov: fov,
+            half_width: half_width,
+            half_height: half_height
+        };
+
+        camera.set_camera_from_settings();
+
+        return camera;
     }
 
-    pub fn prepare_ray(&mut self)
+    pub fn prepare_ray(&mut self, x_in: u32, y_in: u32) -> Ray
     {
-        let ray_origin = self.transform.local_matrix.multiply_vec3_matrix(self.transform.position);
-        self.ray = Ray::new(ray_origin, Vec3::new(0.0, 0.0, 0.0));
-        self.ray.set_dir_matrix(self.transform.world_matrix * self.transform.local_matrix);
-    }
+        let u = 2.0 * (x_in as f64 + random_float(0.0, 1.0)) / (Settings::get_image_width() as f64);
+        let v = 2.0 * (y_in as f64 + random_float(0.0, 1.0)) / (Settings::get_image_height() as f64);
 
-    #[allow(dead_code)]
-    pub fn print_camera(&self)
-    {
-        println!("Camera");
-        println!("{} {} {}", self.transform.position.x, self.transform.position.y, self.transform.position.z);
-        println!("{} {} {}", self.transform.rotation.x, self.transform.rotation.y, self.transform.rotation.z);
-        println!("{} {} {}", self.transform.scale.x, self.transform.scale.y, self.transform.scale.z);
+        let angle: f64 = (deg2rad((self.fov * 0.5).into()) as f64).tan() as f64;
+        let x = (u - 1.0) * self.aspect_ratio * angle;
+        let y = (1.0 - v) * angle;
+
+        let inverse = self.transform.transform.inverse().unwrap();
+        let direction = inverse * (Vector3::new(x, y, -1.0)).normalize();
+        let origin = self.transform.position;
+        return Ray::new(origin, direction, Uuid::nil());
     }
 
     #[allow(dead_code)]
     pub fn set_camera_from_settings(&mut self) -> Camera
     {
-        self.fov = Settings::get_fov() as f32;
+        self.fov = Settings::get_fov() as f64;
         self.aspect_ratio = Settings::get_aspect_ratio();
-        self.prepare_ray();
         return *self;
     }
 
     #[allow(dead_code)]
-    pub fn set_field_of_view(&mut self, vfov: f32) -> Camera
+    pub fn set_field_of_view(&mut self, vfov: f64) -> Camera
     {
         self.fov = vfov;
-        self.prepare_ray();
         return *self;
     }
 
     #[allow(dead_code)]
-    pub fn set_aspect_ratio(&mut self, aspect_ratio: f32) -> Camera
+    pub fn set_aspect_ratio(&mut self, aspect_ratio: f64) -> Camera
     {
         self.aspect_ratio = aspect_ratio;
-        self.prepare_ray();
         return *self;
     }
     
-    #[allow(dead_code)]
-    pub fn set_position(&mut self, position: Vec3) -> Camera
-    {
-        self.transform.set_position(position);
-        self.prepare_ray();
-        return *self;
-    }
-
-    #[allow(dead_code)]
-    pub fn set_rotation(&mut self, rotation: Vec3) -> Camera
-    {
-        self.transform.set_rotation(rotation);
-        self.prepare_ray();
-        return *self;
-    }
-
-    #[allow(dead_code)]
-    pub fn set_scale(&mut self, scale: Vec3) -> Camera
-    {
-        self.transform.set_scale(scale);
-        self.prepare_ray();
-        return *self;
-    }
-
     //Calculates the ray relative to the cameras position and rotation
     pub fn trace(&mut self, world: HittableList)
     {
@@ -105,20 +101,13 @@ impl Camera
         {
             for x in 0..Settings::get_image_width()
             {
-                let mut pixel_color = Vec3::new(0.0, 0.0, 0.0);
+                let mut pixel_color = Color::new(0.0, 0.0, 0.0);
                 for _ in 0..Settings::get_samples_per_pixel()
                 {
-                    let angle: f32 = (deg2rad((self.fov * 0.5).into()) as f64).tan() as f32;
-                    let x = (2.0 * (x as f32 + 0.5) / Settings::get_image_width() as f32 - 1.0) * self.aspect_ratio * angle;
-                    let y = (1.0 - 2.0 * (y as f32 + 0.5) / Settings::get_image_height() as f32) * angle;
-                    let dir: Vec3 = self.ray.dir_matrix.multiply_dir_matrix(Vec3::new(x, y, -1.0)).normalize();
-                    self.ray.direction = dir;
-                    self.ray.origin = self.transform.position;
-                    let backgorund_colour = Vec3::new(0.0, 0.0, 0.0);
-                    let new_color = pixel_color + Ray::calcaulte_ray(&self.ray, &backgorund_colour, &world, Settings::get_max_depth());
-                    pixel_color = new_color;
+                    let ray = self.prepare_ray(x, y);
+                    pixel_color += Ray::calcaulte_ray(ray, &world, Settings::get_max_depth());
                 }
-                write_color(pixel_color, Settings::get_samples_per_pixel());
+                Color::write_color(pixel_color, Settings::get_samples_per_pixel());
             }
         }
     }

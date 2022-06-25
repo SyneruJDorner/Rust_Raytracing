@@ -1,194 +1,90 @@
 use std::ops;
-use crate::matrix4x4::Matrix4x4;
-use crate::vec3::Vec3;
+use crate::Matrix;
+use crate::Tuple;
+use crate::Vector3;
+use crate::Point;
 
-//#region Operator *
-impl ops::Mul<Matrix4x4> for Matrix4x4
+//#region Operator * (Matrix * Matrix)
+impl ops::Mul<Matrix> for Matrix
 {
-    type Output = Matrix4x4;
-    fn mul(self, b: Matrix4x4) -> Self::Output
+    type Output = Matrix;
+    fn mul(self, b: Matrix) -> Self::Output
     {
-        let mut result: Matrix4x4 = Matrix4x4::identity();
-        // Cache the invariants in registers
-        let mut x = self.matrix[0][0];
-        let mut y = self.matrix[0][1];
-        let mut z = self.matrix[0][2];
-        let mut w = self.matrix[0][3];
-        // Perform the operation on the first row
-        result.matrix[0][0] = (b.matrix[0][0] * x) + (b.matrix[1][0] * y) + (b.matrix[2][0] * z) + (b.matrix[3][0] * w);
-        result.matrix[0][1] = (b.matrix[0][1] * x) + (b.matrix[1][1] * y) + (b.matrix[2][1] * z) + (b.matrix[3][1] * w);
-        result.matrix[0][2] = (b.matrix[0][2] * x) + (b.matrix[1][2] * y) + (b.matrix[2][2] * z) + (b.matrix[3][2] * w);
-        result.matrix[0][3] = (b.matrix[0][3] * x) + (b.matrix[1][3] * y) + (b.matrix[2][3] * z) + (b.matrix[3][3] * w);
-        // Repeat for all the b.matrix rows
-        x = self.matrix[1][0];
-        y = self.matrix[1][1];
-        z = self.matrix[1][2];
-        w = self.matrix[1][3];
-        result.matrix[1][0] = (b.matrix[0][0] * x) + (b.matrix[1][0] * y) + (b.matrix[2][0] * z) + (b.matrix[3][0] * w);
-        result.matrix[1][1] = (b.matrix[0][1] * x) + (b.matrix[1][1] * y) + (b.matrix[2][1] * z) + (b.matrix[3][1] * w);
-        result.matrix[1][2] = (b.matrix[0][2] * x) + (b.matrix[1][2] * y) + (b.matrix[2][2] * z) + (b.matrix[3][2] * w);
-        result.matrix[1][3] = (b.matrix[0][3] * x) + (b.matrix[1][3] * y) + (b.matrix[2][3] * z) + (b.matrix[3][3] * w);
-        x = self.matrix[2][0];
-        y = self.matrix[2][1];
-        z = self.matrix[2][2];
-        w = self.matrix[2][3];
-        result.matrix[2][0] = (b.matrix[0][0] * x) + (b.matrix[1][0] * y) + (b.matrix[2][0] * z) + (b.matrix[3][0] * w);
-        result.matrix[2][1] = (b.matrix[0][1] * x) + (b.matrix[1][1] * y) + (b.matrix[2][1] * z) + (b.matrix[3][1] * w);
-        result.matrix[2][2] = (b.matrix[0][2] * x) + (b.matrix[1][2] * y) + (b.matrix[2][2] * z) + (b.matrix[3][2] * w);
-        result.matrix[2][3] = (b.matrix[0][3] * x) + (b.matrix[1][3] * y) + (b.matrix[2][3] * z) + (b.matrix[3][3] * w);
-        x = self.matrix[3][0];
-        y = self.matrix[3][1];
-        z = self.matrix[3][2];
-        w = self.matrix[3][3];
-        result.matrix[3][0] = (b.matrix[0][0] * x) + (b.matrix[1][0] * y) + (b.matrix[2][0] * z) + (b.matrix[3][0] * w);
-        result.matrix[3][1] = (b.matrix[0][1] * x) + (b.matrix[1][1] * y) + (b.matrix[2][1] * z) + (b.matrix[3][1] * w);
-        result.matrix[3][2] = (b.matrix[0][2] * x) + (b.matrix[1][2] * y) + (b.matrix[2][2] * z) + (b.matrix[3][2] * w);
-        result.matrix[3][3] = (b.matrix[0][3] * x) + (b.matrix[1][3] * y) + (b.matrix[2][3] * z) + (b.matrix[3][3] * w);
+        let mut result: Matrix = Matrix::identity();
+        for i in 0..4 {
+            for j in 0..4 {
+                result.matrix[i][j] =   self.matrix[i][0] * b.matrix[0][j] +
+                                        self.matrix[i][1] * b.matrix[1][j] +
+                                        self.matrix[i][2] * b.matrix[2][j] +
+                                        self.matrix[i][3] * b.matrix[3][j];
+            }
+        }
         return result;
     }
 }
 
-impl ops::Mul<&Matrix4x4> for Matrix4x4
+impl ops::Mul<&Matrix> for Matrix
 {
-    type Output = Matrix4x4;
-    fn mul(self, b: &Matrix4x4) -> Self::Output
+    type Output = Matrix;
+    fn mul(self, b: &Matrix) -> Self::Output
     {
-        let mut result: Matrix4x4 = Matrix4x4::identity();
-        // Cache the invariants in registers
-        let mut x = self.matrix[0][0];
-        let mut y = self.matrix[0][1];
-        let mut z = self.matrix[0][2];
-        let mut w = self.matrix[0][3];
-        // Perform the operation on the first row
-        result.matrix[0][0] = (b.matrix[0][0] * x) + (b.matrix[1][0] * y) + (b.matrix[2][0] * z) + (b.matrix[3][0] * w);
-        result.matrix[0][1] = (b.matrix[0][1] * x) + (b.matrix[1][1] * y) + (b.matrix[2][1] * z) + (b.matrix[3][1] * w);
-        result.matrix[0][2] = (b.matrix[0][2] * x) + (b.matrix[1][2] * y) + (b.matrix[2][2] * z) + (b.matrix[3][2] * w);
-        result.matrix[0][3] = (b.matrix[0][3] * x) + (b.matrix[1][3] * y) + (b.matrix[2][3] * z) + (b.matrix[3][3] * w);
-        // Repeat for all the b.matrix rows
-        x = self.matrix[1][0];
-        y = self.matrix[1][1];
-        z = self.matrix[1][2];
-        w = self.matrix[1][3];
-        result.matrix[1][0] = (b.matrix[0][0] * x) + (b.matrix[1][0] * y) + (b.matrix[2][0] * z) + (b.matrix[3][0] * w);
-        result.matrix[1][1] = (b.matrix[0][1] * x) + (b.matrix[1][1] * y) + (b.matrix[2][1] * z) + (b.matrix[3][1] * w);
-        result.matrix[1][2] = (b.matrix[0][2] * x) + (b.matrix[1][2] * y) + (b.matrix[2][2] * z) + (b.matrix[3][2] * w);
-        result.matrix[1][3] = (b.matrix[0][3] * x) + (b.matrix[1][3] * y) + (b.matrix[2][3] * z) + (b.matrix[3][3] * w);
-        x = self.matrix[2][0];
-        y = self.matrix[2][1];
-        z = self.matrix[2][2];
-        w = self.matrix[2][3];
-        result.matrix[2][0] = (b.matrix[0][0] * x) + (b.matrix[1][0] * y) + (b.matrix[2][0] * z) + (b.matrix[3][0] * w);
-        result.matrix[2][1] = (b.matrix[0][1] * x) + (b.matrix[1][1] * y) + (b.matrix[2][1] * z) + (b.matrix[3][1] * w);
-        result.matrix[2][2] = (b.matrix[0][2] * x) + (b.matrix[1][2] * y) + (b.matrix[2][2] * z) + (b.matrix[3][2] * w);
-        result.matrix[2][3] = (b.matrix[0][3] * x) + (b.matrix[1][3] * y) + (b.matrix[2][3] * z) + (b.matrix[3][3] * w);
-        x = self.matrix[3][0];
-        y = self.matrix[3][1];
-        z = self.matrix[3][2];
-        w = self.matrix[3][3];
-        result.matrix[3][0] = (b.matrix[0][0] * x) + (b.matrix[1][0] * y) + (b.matrix[2][0] * z) + (b.matrix[3][0] * w);
-        result.matrix[3][1] = (b.matrix[0][1] * x) + (b.matrix[1][1] * y) + (b.matrix[2][1] * z) + (b.matrix[3][1] * w);
-        result.matrix[3][2] = (b.matrix[0][2] * x) + (b.matrix[1][2] * y) + (b.matrix[2][2] * z) + (b.matrix[3][2] * w);
-        result.matrix[3][3] = (b.matrix[0][3] * x) + (b.matrix[1][3] * y) + (b.matrix[2][3] * z) + (b.matrix[3][3] * w);
+        let mut result: Matrix = Matrix::identity();
+        for i in 0..4 {
+            for j in 0..4 {
+                result.matrix[i][j] =   self.matrix[i][0] * b.matrix[0][j] +
+                                        self.matrix[i][1] * b.matrix[1][j] +
+                                        self.matrix[i][2] * b.matrix[2][j] +
+                                        self.matrix[i][3] * b.matrix[3][j];
+            }
+        }
         return result;
     }
 }
 
-impl ops::Mul<Matrix4x4> for &Matrix4x4
+impl ops::Mul<Matrix> for &Matrix
 {
-    type Output = Matrix4x4;
-    fn mul(self, b: Matrix4x4) -> Self::Output
+    type Output = Matrix;
+    fn mul(self, b: Matrix) -> Self::Output
     {
-        let mut result: Matrix4x4 = Matrix4x4::identity();
-        // Cache the invariants in registers
-        let mut x = self.matrix[0][0];
-        let mut y = self.matrix[0][1];
-        let mut z = self.matrix[0][2];
-        let mut w = self.matrix[0][3];
-        // Perform the operation on the first row
-        result.matrix[0][0] = (b.matrix[0][0] * x) + (b.matrix[1][0] * y) + (b.matrix[2][0] * z) + (b.matrix[3][0] * w);
-        result.matrix[0][1] = (b.matrix[0][1] * x) + (b.matrix[1][1] * y) + (b.matrix[2][1] * z) + (b.matrix[3][1] * w);
-        result.matrix[0][2] = (b.matrix[0][2] * x) + (b.matrix[1][2] * y) + (b.matrix[2][2] * z) + (b.matrix[3][2] * w);
-        result.matrix[0][3] = (b.matrix[0][3] * x) + (b.matrix[1][3] * y) + (b.matrix[2][3] * z) + (b.matrix[3][3] * w);
-        // Repeat for all the b.matrix rows
-        x = self.matrix[1][0];
-        y = self.matrix[1][1];
-        z = self.matrix[1][2];
-        w = self.matrix[1][3];
-        result.matrix[1][0] = (b.matrix[0][0] * x) + (b.matrix[1][0] * y) + (b.matrix[2][0] * z) + (b.matrix[3][0] * w);
-        result.matrix[1][1] = (b.matrix[0][1] * x) + (b.matrix[1][1] * y) + (b.matrix[2][1] * z) + (b.matrix[3][1] * w);
-        result.matrix[1][2] = (b.matrix[0][2] * x) + (b.matrix[1][2] * y) + (b.matrix[2][2] * z) + (b.matrix[3][2] * w);
-        result.matrix[1][3] = (b.matrix[0][3] * x) + (b.matrix[1][3] * y) + (b.matrix[2][3] * z) + (b.matrix[3][3] * w);
-        x = self.matrix[2][0];
-        y = self.matrix[2][1];
-        z = self.matrix[2][2];
-        w = self.matrix[2][3];
-        result.matrix[2][0] = (b.matrix[0][0] * x) + (b.matrix[1][0] * y) + (b.matrix[2][0] * z) + (b.matrix[3][0] * w);
-        result.matrix[2][1] = (b.matrix[0][1] * x) + (b.matrix[1][1] * y) + (b.matrix[2][1] * z) + (b.matrix[3][1] * w);
-        result.matrix[2][2] = (b.matrix[0][2] * x) + (b.matrix[1][2] * y) + (b.matrix[2][2] * z) + (b.matrix[3][2] * w);
-        result.matrix[2][3] = (b.matrix[0][3] * x) + (b.matrix[1][3] * y) + (b.matrix[2][3] * z) + (b.matrix[3][3] * w);
-        x = self.matrix[3][0];
-        y = self.matrix[3][1];
-        z = self.matrix[3][2];
-        w = self.matrix[3][3];
-        result.matrix[3][0] = (b.matrix[0][0] * x) + (b.matrix[1][0] * y) + (b.matrix[2][0] * z) + (b.matrix[3][0] * w);
-        result.matrix[3][1] = (b.matrix[0][1] * x) + (b.matrix[1][1] * y) + (b.matrix[2][1] * z) + (b.matrix[3][1] * w);
-        result.matrix[3][2] = (b.matrix[0][2] * x) + (b.matrix[1][2] * y) + (b.matrix[2][2] * z) + (b.matrix[3][2] * w);
-        result.matrix[3][3] = (b.matrix[0][3] * x) + (b.matrix[1][3] * y) + (b.matrix[2][3] * z) + (b.matrix[3][3] * w);
+        let mut result: Matrix = Matrix::identity();
+        for i in 0..4 {
+            for j in 0..4 {
+                result.matrix[i][j] =   self.matrix[i][0] * b.matrix[0][j] +
+                                        self.matrix[i][1] * b.matrix[1][j] +
+                                        self.matrix[i][2] * b.matrix[2][j] +
+                                        self.matrix[i][3] * b.matrix[3][j];
+            }
+        }
         return result;
     }
 }
 
-impl ops::Mul<&Matrix4x4> for &Matrix4x4
+impl ops::Mul<&Matrix> for &Matrix
 {
-    type Output = Matrix4x4;
-    fn mul(self, b: &Matrix4x4) -> Self::Output
+    type Output = Matrix;
+    fn mul(self, b: &Matrix) -> Self::Output
     {
-        let mut result: Matrix4x4 = Matrix4x4::identity();
-        // Cache the invariants in registers
-        let mut x = self.matrix[0][0];
-        let mut y = self.matrix[0][1];
-        let mut z = self.matrix[0][2];
-        let mut w = self.matrix[0][3];
-        // Perform the operation on the first row
-        result.matrix[0][0] = (b.matrix[0][0] * x) + (b.matrix[1][0] * y) + (b.matrix[2][0] * z) + (b.matrix[3][0] * w);
-        result.matrix[0][1] = (b.matrix[0][1] * x) + (b.matrix[1][1] * y) + (b.matrix[2][1] * z) + (b.matrix[3][1] * w);
-        result.matrix[0][2] = (b.matrix[0][2] * x) + (b.matrix[1][2] * y) + (b.matrix[2][2] * z) + (b.matrix[3][2] * w);
-        result.matrix[0][3] = (b.matrix[0][3] * x) + (b.matrix[1][3] * y) + (b.matrix[2][3] * z) + (b.matrix[3][3] * w);
-        // Repeat for all the b.matrix rows
-        x = self.matrix[1][0];
-        y = self.matrix[1][1];
-        z = self.matrix[1][2];
-        w = self.matrix[1][3];
-        result.matrix[1][0] = (b.matrix[0][0] * x) + (b.matrix[1][0] * y) + (b.matrix[2][0] * z) + (b.matrix[3][0] * w);
-        result.matrix[1][1] = (b.matrix[0][1] * x) + (b.matrix[1][1] * y) + (b.matrix[2][1] * z) + (b.matrix[3][1] * w);
-        result.matrix[1][2] = (b.matrix[0][2] * x) + (b.matrix[1][2] * y) + (b.matrix[2][2] * z) + (b.matrix[3][2] * w);
-        result.matrix[1][3] = (b.matrix[0][3] * x) + (b.matrix[1][3] * y) + (b.matrix[2][3] * z) + (b.matrix[3][3] * w);
-        x = self.matrix[2][0];
-        y = self.matrix[2][1];
-        z = self.matrix[2][2];
-        w = self.matrix[2][3];
-        result.matrix[2][0] = (b.matrix[0][0] * x) + (b.matrix[1][0] * y) + (b.matrix[2][0] * z) + (b.matrix[3][0] * w);
-        result.matrix[2][1] = (b.matrix[0][1] * x) + (b.matrix[1][1] * y) + (b.matrix[2][1] * z) + (b.matrix[3][1] * w);
-        result.matrix[2][2] = (b.matrix[0][2] * x) + (b.matrix[1][2] * y) + (b.matrix[2][2] * z) + (b.matrix[3][2] * w);
-        result.matrix[2][3] = (b.matrix[0][3] * x) + (b.matrix[1][3] * y) + (b.matrix[2][3] * z) + (b.matrix[3][3] * w);
-        x = self.matrix[3][0];
-        y = self.matrix[3][1];
-        z = self.matrix[3][2];
-        w = self.matrix[3][3];
-        result.matrix[3][0] = (b.matrix[0][0] * x) + (b.matrix[1][0] * y) + (b.matrix[2][0] * z) + (b.matrix[3][0] * w);
-        result.matrix[3][1] = (b.matrix[0][1] * x) + (b.matrix[1][1] * y) + (b.matrix[2][1] * z) + (b.matrix[3][1] * w);
-        result.matrix[3][2] = (b.matrix[0][2] * x) + (b.matrix[1][2] * y) + (b.matrix[2][2] * z) + (b.matrix[3][2] * w);
-        result.matrix[3][3] = (b.matrix[0][3] * x) + (b.matrix[1][3] * y) + (b.matrix[2][3] * z) + (b.matrix[3][3] * w);
+        let mut result: Matrix = Matrix::identity();
+        for i in 0..4 {
+            for j in 0..4 {
+                result.matrix[i][j] =   self.matrix[i][0] * b.matrix[0][j] +
+                                        self.matrix[i][1] * b.matrix[1][j] +
+                                        self.matrix[i][2] * b.matrix[2][j] +
+                                        self.matrix[i][3] * b.matrix[3][j];
+            }
+        }
         return result;
     }
 }
+//#endregion
 
-impl ops::Mul<f32> for Matrix4x4
+//#region Operator * (Matrix * f64)
+impl ops::Mul<f64> for Matrix
 {
-    type Output = Matrix4x4;
-    fn mul(self, b: f32) -> Self::Output
+    type Output = Matrix;
+    fn mul(self, b: f64) -> Self::Output
     {
-        let mut result = Matrix4x4::new();
+        let mut result = Matrix::new();
         for i in 0..4 {
             for j in 0..4 {
                 result.matrix[i][j] = self.matrix[i][j] * b;
@@ -198,12 +94,12 @@ impl ops::Mul<f32> for Matrix4x4
     }
 }
 
-impl ops::Mul<f32> for &Matrix4x4
+impl ops::Mul<f64> for &Matrix
 {
-    type Output = Matrix4x4;
-    fn mul(self, b: f32) -> Self::Output
+    type Output = Matrix;
+    fn mul(self, b: f64) -> Self::Output
     {
-        let mut result = Matrix4x4::new();
+        let mut result = Matrix::new();
         for i in 0..4 {
             for j in 0..4 {
                 result.matrix[i][j] = self.matrix[i][j] * b;
@@ -213,12 +109,12 @@ impl ops::Mul<f32> for &Matrix4x4
     }
 }
 
-impl ops::Mul<&f32> for Matrix4x4
+impl ops::Mul<&f64> for Matrix
 {
-    type Output = Matrix4x4;
-    fn mul(self, b: &f32) -> Self::Output
+    type Output = Matrix;
+    fn mul(self, b: &f64) -> Self::Output
     {
-        let mut result = Matrix4x4::new();
+        let mut result = Matrix::new();
         for i in 0..4 {
             for j in 0..4 {
                 result.matrix[i][j] = self.matrix[i][j] * b;
@@ -228,12 +124,12 @@ impl ops::Mul<&f32> for Matrix4x4
     }
 }
 
-impl ops::Mul<&f32> for &Matrix4x4
+impl ops::Mul<&f64> for &Matrix
 {
-    type Output = Matrix4x4;
-    fn mul(self, b: &f32) -> Self::Output
+    type Output = Matrix;
+    fn mul(self, b: &f64) -> Self::Output
     {
-        let mut result = Matrix4x4::new();
+        let mut result = Matrix::new();
         for i in 0..4 {
             for j in 0..4 {
                 result.matrix[i][j] = self.matrix[i][j] * b;
@@ -243,12 +139,12 @@ impl ops::Mul<&f32> for &Matrix4x4
     }
 }
 
-impl ops::Mul<Matrix4x4> for f32
+impl ops::Mul<Matrix> for f64
 {
-    type Output = Matrix4x4;
-    fn mul(self, b: Matrix4x4) -> Self::Output
+    type Output = Matrix;
+    fn mul(self, b: Matrix) -> Self::Output
     {
-        let mut result = Matrix4x4::new();
+        let mut result = Matrix::new();
         for i in 0..4 {
             for j in 0..4 {
                 result.matrix[i][j] = self * b.matrix[i][j];
@@ -258,12 +154,12 @@ impl ops::Mul<Matrix4x4> for f32
     }
 }
 
-impl ops::Mul<Matrix4x4> for &f32
+impl ops::Mul<Matrix> for &f64
 {
-    type Output = Matrix4x4;
-    fn mul(self, b: Matrix4x4) -> Self::Output
+    type Output = Matrix;
+    fn mul(self, b: Matrix) -> Self::Output
     {
-        let mut result = Matrix4x4::new();
+        let mut result = Matrix::new();
         for i in 0..4 {
             for j in 0..4 {
                 result.matrix[i][j] = self * b.matrix[i][j];
@@ -273,12 +169,12 @@ impl ops::Mul<Matrix4x4> for &f32
     }
 }
 
-impl ops::Mul<&Matrix4x4> for f32
+impl ops::Mul<&Matrix> for f64
 {
-    type Output = Matrix4x4;
-    fn mul(self, b: &Matrix4x4) -> Self::Output
+    type Output = Matrix;
+    fn mul(self, b: &Matrix) -> Self::Output
     {
-        let mut result = Matrix4x4::new();
+        let mut result = Matrix::new();
         for i in 0..4 {
             for j in 0..4 {
                 result.matrix[i][j] = self * b.matrix[i][j];
@@ -288,12 +184,12 @@ impl ops::Mul<&Matrix4x4> for f32
     }
 }
 
-impl ops::Mul<&Matrix4x4> for &f32
+impl ops::Mul<&Matrix> for &f64
 {
-    type Output = Matrix4x4;
-    fn mul(self, b: &Matrix4x4) -> Self::Output
+    type Output = Matrix;
+    fn mul(self, b: &Matrix) -> Self::Output
     {
-        let mut result = Matrix4x4::new();
+        let mut result = Matrix::new();
         for i in 0..4 {
             for j in 0..4 {
                 result.matrix[i][j] = self * b.matrix[i][j];
@@ -302,100 +198,346 @@ impl ops::Mul<&Matrix4x4> for &f32
         return result;
     }
 }
+//#endregion
 
-impl ops::Mul<Matrix4x4> for Vec3
+//#region Operator * (Matrix * Tuple)
+impl ops::Mul<Matrix> for Tuple
 {
-    type Output = Vec3;
-    fn mul(self, b: Matrix4x4) -> Self::Output
+    type Output = Tuple;
+    fn mul(self, b: Matrix) -> Self::Output
     {
-        let x = b.matrix[0][0] * self.x + b.matrix[0][1] * self.y + b.matrix[0][2] * self.z + b.matrix[0][3];
-        let y = b.matrix[1][0] * self.x + b.matrix[1][1] * self.y + b.matrix[1][2] * self.z + b.matrix[1][3];
-        let z = b.matrix[2][0] * self.x + b.matrix[2][1] * self.y + b.matrix[2][2] * self.z + b.matrix[2][3];
-        return Vec3::new(x, y, z);
+        let mut result = Tuple::new(0.0, 0.0, 0.0, 0.0);
+        result.set_x(b.matrix[0][0] * self.x() + b.matrix[0][1] * self.y() + b.matrix[0][2] * self.z() + b.matrix[0][3] * self.w());
+        result.set_y(b.matrix[1][0] * self.x() + b.matrix[1][1] * self.y() + b.matrix[1][2] * self.z() + b.matrix[1][3] * self.w());
+        result.set_z(b.matrix[2][0] * self.x() + b.matrix[2][1] * self.y() + b.matrix[2][2] * self.z() + b.matrix[2][3] * self.w());
+        result.set_w(b.matrix[3][0] * self.x() + b.matrix[3][1] * self.y() + b.matrix[3][2] * self.z() + b.matrix[3][3] * self.w());
+        return result;
     }
 }
 
-impl ops::Mul<Matrix4x4> for &Vec3
+impl ops::Mul<Matrix> for &Tuple
 {
-    type Output = Vec3;
-    fn mul(self, b: Matrix4x4) -> Self::Output
+    type Output = Tuple;
+    fn mul(self, b: Matrix) -> Self::Output
     {
-        let x = b.matrix[0][0] * self.x + b.matrix[0][1] * self.y + b.matrix[0][2] * self.z + b.matrix[0][3];
-        let y = b.matrix[1][0] * self.x + b.matrix[1][1] * self.y + b.matrix[1][2] * self.z + b.matrix[1][3];
-        let z = b.matrix[2][0] * self.x + b.matrix[2][1] * self.y + b.matrix[2][2] * self.z + b.matrix[2][3];
-        return Vec3::new(x, y, z);
+        let mut result = Tuple::new(0.0, 0.0, 0.0, 0.0);
+        result.set_x(b.matrix[0][0] * self.x() + b.matrix[0][1] * self.y() + b.matrix[0][2] * self.z() + b.matrix[0][3] * self.w());
+        result.set_y(b.matrix[1][0] * self.x() + b.matrix[1][1] * self.y() + b.matrix[1][2] * self.z() + b.matrix[1][3] * self.w());
+        result.set_z(b.matrix[2][0] * self.x() + b.matrix[2][1] * self.y() + b.matrix[2][2] * self.z() + b.matrix[2][3] * self.w());
+        result.set_w(b.matrix[3][0] * self.x() + b.matrix[3][1] * self.y() + b.matrix[3][2] * self.z() + b.matrix[3][3] * self.w());
+        return result;
     }
 }
 
-impl ops::Mul<&Matrix4x4> for Vec3
+impl ops::Mul<&Matrix> for Tuple
 {
-    type Output = Vec3;
-    fn mul(self, b: &Matrix4x4) -> Self::Output
+    type Output = Tuple;
+    fn mul(self, b: &Matrix) -> Self::Output
     {
-        let x = b.matrix[0][0] * self.x + b.matrix[0][1] * self.y + b.matrix[0][2] * self.z + b.matrix[0][3];
-        let y = b.matrix[1][0] * self.x + b.matrix[1][1] * self.y + b.matrix[1][2] * self.z + b.matrix[1][3];
-        let z = b.matrix[2][0] * self.x + b.matrix[2][1] * self.y + b.matrix[2][2] * self.z + b.matrix[2][3];
-        return Vec3::new(x, y, z);
+        let mut result = Tuple::new(0.0, 0.0, 0.0, 0.0);
+        result.set_x(b.matrix[0][0] * self.x() + b.matrix[0][1] * self.y() + b.matrix[0][2] * self.z() + b.matrix[0][3] * self.w());
+        result.set_y(b.matrix[1][0] * self.x() + b.matrix[1][1] * self.y() + b.matrix[1][2] * self.z() + b.matrix[1][3] * self.w());
+        result.set_z(b.matrix[2][0] * self.x() + b.matrix[2][1] * self.y() + b.matrix[2][2] * self.z() + b.matrix[2][3] * self.w());
+        result.set_w(b.matrix[3][0] * self.x() + b.matrix[3][1] * self.y() + b.matrix[3][2] * self.z() + b.matrix[3][3] * self.w());
+        return result;
     }
 }
 
-impl ops::Mul<&Matrix4x4> for &Vec3
+impl ops::Mul<&Matrix> for &Tuple
 {
-    type Output = Vec3;
-    fn mul(self, b: &Matrix4x4) -> Self::Output
+    type Output = Tuple;
+    fn mul(self, b: &Matrix) -> Self::Output
     {
-        let x = b.matrix[0][0] * self.x + b.matrix[0][1] * self.y + b.matrix[0][2] * self.z + b.matrix[0][3];
-        let y = b.matrix[1][0] * self.x + b.matrix[1][1] * self.y + b.matrix[1][2] * self.z + b.matrix[1][3];
-        let z = b.matrix[2][0] * self.x + b.matrix[2][1] * self.y + b.matrix[2][2] * self.z + b.matrix[2][3];
-        return Vec3::new(x, y, z);
+        let mut result = Tuple::new(0.0, 0.0, 0.0, 0.0);
+        result.set_x(b.matrix[0][0] * self.x() + b.matrix[0][1] * self.y() + b.matrix[0][2] * self.z() + b.matrix[0][3] * self.w());
+        result.set_y(b.matrix[1][0] * self.x() + b.matrix[1][1] * self.y() + b.matrix[1][2] * self.z() + b.matrix[1][3] * self.w());
+        result.set_z(b.matrix[2][0] * self.x() + b.matrix[2][1] * self.y() + b.matrix[2][2] * self.z() + b.matrix[2][3] * self.w());
+        result.set_w(b.matrix[3][0] * self.x() + b.matrix[3][1] * self.y() + b.matrix[3][2] * self.z() + b.matrix[3][3] * self.w());
+        return result;
     }
 }
 
-impl ops::Mul<Vec3> for Matrix4x4
+impl ops::Mul<Tuple> for Matrix
 {
-    type Output = Vec3;
-    fn mul(self, b: Vec3) -> Self::Output
+    type Output = Tuple;
+    fn mul(self, b: Tuple) -> Self::Output
     {
-        let x = self.matrix[0][0] * b.x + self.matrix[0][1] * b.y + self.matrix[0][2] * b.z + self.matrix[0][3];
-        let y = self.matrix[1][0] * b.x + self.matrix[1][1] * b.y + self.matrix[1][2] * b.z + self.matrix[1][3];
-        let z = self.matrix[2][0] * b.x + self.matrix[2][1] * b.y + self.matrix[2][2] * b.z + self.matrix[2][3];
-        return Vec3::new(x, y, z);
+        let mut result = Tuple::new(0.0, 0.0, 0.0, 0.0);
+        result.set_x(self.matrix[0][0] * b.x() + self.matrix[0][1] * b.y() + self.matrix[0][2] * b.z() + self.matrix[0][3] * b.w());
+        result.set_y(self.matrix[1][0] * b.x() + self.matrix[1][1] * b.y() + self.matrix[1][2] * b.z() + self.matrix[1][3] * b.w());
+        result.set_z(self.matrix[2][0] * b.x() + self.matrix[2][1] * b.y() + self.matrix[2][2] * b.z() + self.matrix[2][3] * b.w());
+        result.set_w(self.matrix[3][0] * b.x() + self.matrix[3][1] * b.y() + self.matrix[3][2] * b.z() + self.matrix[3][3] * b.w());
+        return result;
     }
 }
 
-impl ops::Mul<Vec3> for &Matrix4x4
+impl ops::Mul<Tuple> for &Matrix
 {
-    type Output = Vec3;
-    fn mul(self, b: Vec3) -> Self::Output
+    type Output = Tuple;
+    fn mul(self, b: Tuple) -> Self::Output
     {
-        let x = self.matrix[0][0] * b.x + self.matrix[0][1] * b.y + self.matrix[0][2] * b.z + self.matrix[0][3];
-        let y = self.matrix[1][0] * b.x + self.matrix[1][1] * b.y + self.matrix[1][2] * b.z + self.matrix[1][3];
-        let z = self.matrix[2][0] * b.x + self.matrix[2][1] * b.y + self.matrix[2][2] * b.z + self.matrix[2][3];
-        return Vec3::new(x, y, z);
+        let mut result = Tuple::new(0.0, 0.0, 0.0, 0.0);
+        result.set_x(self.matrix[0][0] * b.x() + self.matrix[0][1] * b.y() + self.matrix[0][2] * b.z() + self.matrix[0][3] * b.w());
+        result.set_y(self.matrix[1][0] * b.x() + self.matrix[1][1] * b.y() + self.matrix[1][2] * b.z() + self.matrix[1][3] * b.w());
+        result.set_z(self.matrix[2][0] * b.x() + self.matrix[2][1] * b.y() + self.matrix[2][2] * b.z() + self.matrix[2][3] * b.w());
+        result.set_w(self.matrix[3][0] * b.x() + self.matrix[3][1] * b.y() + self.matrix[3][2] * b.z() + self.matrix[3][3] * b.w());
+        return result;
     }
 }
 
-impl ops::Mul<&Vec3> for Matrix4x4
+impl ops::Mul<&Tuple> for Matrix
 {
-    type Output = Vec3;
-    fn mul(self, b: &Vec3) -> Self::Output
+    type Output = Tuple;
+    fn mul(self, b: &Tuple) -> Self::Output
     {
-        let x = self.matrix[0][0] * b.x + self.matrix[0][1] * b.y + self.matrix[0][2] * b.z + self.matrix[0][3];
-        let y = self.matrix[1][0] * b.x + self.matrix[1][1] * b.y + self.matrix[1][2] * b.z + self.matrix[1][3];
-        let z = self.matrix[2][0] * b.x + self.matrix[2][1] * b.y + self.matrix[2][2] * b.z + self.matrix[2][3];
-        return Vec3::new(x, y, z);
+        let mut result = Tuple::new(0.0, 0.0, 0.0, 0.0);
+        result.set_x(self.matrix[0][0] * b.x() + self.matrix[0][1] * b.y() + self.matrix[0][2] * b.z() + self.matrix[0][3] * b.w());
+        result.set_y(self.matrix[1][0] * b.x() + self.matrix[1][1] * b.y() + self.matrix[1][2] * b.z() + self.matrix[1][3] * b.w());
+        result.set_z(self.matrix[2][0] * b.x() + self.matrix[2][1] * b.y() + self.matrix[2][2] * b.z() + self.matrix[2][3] * b.w());
+        result.set_w(self.matrix[3][0] * b.x() + self.matrix[3][1] * b.y() + self.matrix[3][2] * b.z() + self.matrix[3][3] * b.w());
+        return result;
     }
 }
 
-impl ops::Mul<&Vec3> for &Matrix4x4
+impl ops::Mul<&Tuple> for &Matrix
 {
-    type Output = Vec3;
-    fn mul(self, b: &Vec3) -> Self::Output
+    type Output = Tuple;
+    fn mul(self, b: &Tuple) -> Self::Output
     {
-        let x = self.matrix[0][0] * b.x + self.matrix[0][1] * b.y + self.matrix[0][2] * b.z + self.matrix[0][3];
-        let y = self.matrix[1][0] * b.x + self.matrix[1][1] * b.y + self.matrix[1][2] * b.z + self.matrix[1][3];
-        let z = self.matrix[2][0] * b.x + self.matrix[2][1] * b.y + self.matrix[2][2] * b.z + self.matrix[2][3];
-        return Vec3::new(x, y, z);
+        let mut result = Tuple::new(0.0, 0.0, 0.0, 0.0);
+        result.set_x(self.matrix[0][0] * b.x() + self.matrix[0][1] * b.y() + self.matrix[0][2] * b.z() + self.matrix[0][3] * b.w());
+        result.set_y(self.matrix[1][0] * b.x() + self.matrix[1][1] * b.y() + self.matrix[1][2] * b.z() + self.matrix[1][3] * b.w());
+        result.set_z(self.matrix[2][0] * b.x() + self.matrix[2][1] * b.y() + self.matrix[2][2] * b.z() + self.matrix[2][3] * b.w());
+        result.set_w(self.matrix[3][0] * b.x() + self.matrix[3][1] * b.y() + self.matrix[3][2] * b.z() + self.matrix[3][3] * b.w());
+        return result;
+    }
+}
+//#endregion
+
+//#region Operator * (Matrix * Vector3)
+impl ops::Mul<Matrix> for Vector3
+{
+    type Output = Vector3;
+    fn mul(self, b: Matrix) -> Self::Output
+    {
+        let mut result = Vector3::new(0.0, 0.0, 0.0);
+        result.set_x(b.matrix[0][0] * self.x() + b.matrix[0][1] * self.y() + b.matrix[0][2] * self.z() + b.matrix[0][3] * self.w());
+        result.set_y(b.matrix[1][0] * self.x() + b.matrix[1][1] * self.y() + b.matrix[1][2] * self.z() + b.matrix[1][3] * self.w());
+        result.set_z(b.matrix[2][0] * self.x() + b.matrix[2][1] * self.y() + b.matrix[2][2] * self.z() + b.matrix[2][3] * self.w());
+        result.set_w(b.matrix[3][0] * self.x() + b.matrix[3][1] * self.y() + b.matrix[3][2] * self.z() + b.matrix[3][3] * self.w());
+        return result;
+    }
+}
+
+impl ops::Mul<Matrix> for &Vector3
+{
+    type Output = Vector3;
+    fn mul(self, b: Matrix) -> Self::Output
+    {
+        let mut result = Vector3::new(0.0, 0.0, 0.0);
+        result.set_x(b.matrix[0][0] * self.x() + b.matrix[0][1] * self.y() + b.matrix[0][2] * self.z() + b.matrix[0][3] * self.w());
+        result.set_y(b.matrix[1][0] * self.x() + b.matrix[1][1] * self.y() + b.matrix[1][2] * self.z() + b.matrix[1][3] * self.w());
+        result.set_z(b.matrix[2][0] * self.x() + b.matrix[2][1] * self.y() + b.matrix[2][2] * self.z() + b.matrix[2][3] * self.w());
+        result.set_w(b.matrix[3][0] * self.x() + b.matrix[3][1] * self.y() + b.matrix[3][2] * self.z() + b.matrix[3][3] * self.w());
+        return result;
+    }
+}
+
+impl ops::Mul<&Matrix> for Vector3
+{
+    type Output = Vector3;
+    fn mul(self, b: &Matrix) -> Self::Output
+    {
+        let mut result = Vector3::new(0.0, 0.0, 0.0);
+        result.set_x(b.matrix[0][0] * self.x() + b.matrix[0][1] * self.y() + b.matrix[0][2] * self.z() + b.matrix[0][3] * self.w());
+        result.set_y(b.matrix[1][0] * self.x() + b.matrix[1][1] * self.y() + b.matrix[1][2] * self.z() + b.matrix[1][3] * self.w());
+        result.set_z(b.matrix[2][0] * self.x() + b.matrix[2][1] * self.y() + b.matrix[2][2] * self.z() + b.matrix[2][3] * self.w());
+        result.set_w(b.matrix[3][0] * self.x() + b.matrix[3][1] * self.y() + b.matrix[3][2] * self.z() + b.matrix[3][3] * self.w());
+        return result;
+    }
+}
+
+impl ops::Mul<&Matrix> for &Vector3
+{
+    type Output = Vector3;
+    fn mul(self, b: &Matrix) -> Self::Output
+    {
+        let mut result = Vector3::new(0.0, 0.0, 0.0);
+        result.set_x(b.matrix[0][0] * self.x() + b.matrix[0][1] * self.y() + b.matrix[0][2] * self.z() + b.matrix[0][3] * self.w());
+        result.set_y(b.matrix[1][0] * self.x() + b.matrix[1][1] * self.y() + b.matrix[1][2] * self.z() + b.matrix[1][3] * self.w());
+        result.set_z(b.matrix[2][0] * self.x() + b.matrix[2][1] * self.y() + b.matrix[2][2] * self.z() + b.matrix[2][3] * self.w());
+        result.set_w(b.matrix[3][0] * self.x() + b.matrix[3][1] * self.y() + b.matrix[3][2] * self.z() + b.matrix[3][3] * self.w());
+        return result;
+    }
+}
+
+impl ops::Mul<Vector3> for Matrix
+{
+    type Output = Vector3;
+    fn mul(self, b: Vector3) -> Self::Output
+    {
+        let mut result = Vector3::new(0.0, 0.0, 0.0);
+        result.set_x(self.matrix[0][0] * b.x() + self.matrix[0][1] * b.y() + self.matrix[0][2] * b.z() + self.matrix[0][3] * b.w());
+        result.set_y(self.matrix[1][0] * b.x() + self.matrix[1][1] * b.y() + self.matrix[1][2] * b.z() + self.matrix[1][3] * b.w());
+        result.set_z(self.matrix[2][0] * b.x() + self.matrix[2][1] * b.y() + self.matrix[2][2] * b.z() + self.matrix[2][3] * b.w());
+        result.set_w(self.matrix[3][0] * b.x() + self.matrix[3][1] * b.y() + self.matrix[3][2] * b.z() + self.matrix[3][3] * b.w());
+        return result;
+    }
+}
+
+impl ops::Mul<Vector3> for &Matrix
+{
+    type Output = Vector3;
+    fn mul(self, b: Vector3) -> Self::Output
+    {
+        let mut result = Vector3::new(0.0, 0.0, 0.0);
+        result.set_x(self.matrix[0][0] * b.x() + self.matrix[0][1] * b.y() + self.matrix[0][2] * b.z() + self.matrix[0][3] * b.w());
+        result.set_y(self.matrix[1][0] * b.x() + self.matrix[1][1] * b.y() + self.matrix[1][2] * b.z() + self.matrix[1][3] * b.w());
+        result.set_z(self.matrix[2][0] * b.x() + self.matrix[2][1] * b.y() + self.matrix[2][2] * b.z() + self.matrix[2][3] * b.w());
+        result.set_w(self.matrix[3][0] * b.x() + self.matrix[3][1] * b.y() + self.matrix[3][2] * b.z() + self.matrix[3][3] * b.w());
+        return result;
+    }
+}
+
+impl ops::Mul<&Vector3> for Matrix
+{
+    type Output = Vector3;
+    fn mul(self, b: &Vector3) -> Self::Output
+    {
+        let mut result = Vector3::new(0.0, 0.0, 0.0);
+        result.set_x(self.matrix[0][0] * b.x() + self.matrix[0][1] * b.y() + self.matrix[0][2] * b.z() + self.matrix[0][3] * b.w());
+        result.set_y(self.matrix[1][0] * b.x() + self.matrix[1][1] * b.y() + self.matrix[1][2] * b.z() + self.matrix[1][3] * b.w());
+        result.set_z(self.matrix[2][0] * b.x() + self.matrix[2][1] * b.y() + self.matrix[2][2] * b.z() + self.matrix[2][3] * b.w());
+        result.set_w(self.matrix[3][0] * b.x() + self.matrix[3][1] * b.y() + self.matrix[3][2] * b.z() + self.matrix[3][3] * b.w());
+        return result;
+    }
+}
+
+impl ops::Mul<&Vector3> for &Matrix
+{
+    type Output = Vector3;
+    fn mul(self, b: &Vector3) -> Self::Output
+    {
+        let mut result = Vector3::new(0.0, 0.0, 0.0);
+        result.set_x(self.matrix[0][0] * b.x() + self.matrix[0][1] * b.y() + self.matrix[0][2] * b.z() + self.matrix[0][3] * b.w());
+        result.set_y(self.matrix[1][0] * b.x() + self.matrix[1][1] * b.y() + self.matrix[1][2] * b.z() + self.matrix[1][3] * b.w());
+        result.set_z(self.matrix[2][0] * b.x() + self.matrix[2][1] * b.y() + self.matrix[2][2] * b.z() + self.matrix[2][3] * b.w());
+        result.set_w(self.matrix[3][0] * b.x() + self.matrix[3][1] * b.y() + self.matrix[3][2] * b.z() + self.matrix[3][3] * b.w());
+        return result;
+    }
+}
+//#endregion
+
+//#region Operator * (Matrix * Point)
+impl ops::Mul<Matrix> for Point
+{
+    type Output = Point;
+    fn mul(self, b: Matrix) -> Self::Output
+    {
+        let mut result = Point::new(0.0, 0.0, 0.0);
+        result.set_x(b.matrix[0][0] * self.x() + b.matrix[0][1] * self.y() + b.matrix[0][2] * self.z() + b.matrix[0][3] * self.w());
+        result.set_y(b.matrix[1][0] * self.x() + b.matrix[1][1] * self.y() + b.matrix[1][2] * self.z() + b.matrix[1][3] * self.w());
+        result.set_z(b.matrix[2][0] * self.x() + b.matrix[2][1] * self.y() + b.matrix[2][2] * self.z() + b.matrix[2][3] * self.w());
+        result.set_w(b.matrix[3][0] * self.x() + b.matrix[3][1] * self.y() + b.matrix[3][2] * self.z() + b.matrix[3][3] * self.w());
+        return result;
+    }
+}
+
+impl ops::Mul<Matrix> for &Point
+{
+    type Output = Point;
+    fn mul(self, b: Matrix) -> Self::Output
+    {
+        let mut result = Point::new(0.0, 0.0, 0.0);
+        result.set_x(b.matrix[0][0] * self.x() + b.matrix[0][1] * self.y() + b.matrix[0][2] * self.z() + b.matrix[0][3] * self.w());
+        result.set_y(b.matrix[1][0] * self.x() + b.matrix[1][1] * self.y() + b.matrix[1][2] * self.z() + b.matrix[1][3] * self.w());
+        result.set_z(b.matrix[2][0] * self.x() + b.matrix[2][1] * self.y() + b.matrix[2][2] * self.z() + b.matrix[2][3] * self.w());
+        result.set_w(b.matrix[3][0] * self.x() + b.matrix[3][1] * self.y() + b.matrix[3][2] * self.z() + b.matrix[3][3] * self.w());
+        return result;
+    }
+}
+
+impl ops::Mul<&Matrix> for Point
+{
+    type Output = Point;
+    fn mul(self, b: &Matrix) -> Self::Output
+    {
+        let mut result = Point::new(0.0, 0.0, 0.0);
+        result.set_x(b.matrix[0][0] * self.x() + b.matrix[0][1] * self.y() + b.matrix[0][2] * self.z() + b.matrix[0][3] * self.w());
+        result.set_y(b.matrix[1][0] * self.x() + b.matrix[1][1] * self.y() + b.matrix[1][2] * self.z() + b.matrix[1][3] * self.w());
+        result.set_z(b.matrix[2][0] * self.x() + b.matrix[2][1] * self.y() + b.matrix[2][2] * self.z() + b.matrix[2][3] * self.w());
+        result.set_w(b.matrix[3][0] * self.x() + b.matrix[3][1] * self.y() + b.matrix[3][2] * self.z() + b.matrix[3][3] * self.w());
+        return result;
+    }
+}
+
+impl ops::Mul<&Matrix> for &Point
+{
+    type Output = Point;
+    fn mul(self, b: &Matrix) -> Self::Output
+    {
+        let mut result = Point::new(0.0, 0.0, 0.0);
+        result.set_x(b.matrix[0][0] * self.x() + b.matrix[0][1] * self.y() + b.matrix[0][2] * self.z() + b.matrix[0][3] * self.w());
+        result.set_y(b.matrix[1][0] * self.x() + b.matrix[1][1] * self.y() + b.matrix[1][2] * self.z() + b.matrix[1][3] * self.w());
+        result.set_z(b.matrix[2][0] * self.x() + b.matrix[2][1] * self.y() + b.matrix[2][2] * self.z() + b.matrix[2][3] * self.w());
+        result.set_w(b.matrix[3][0] * self.x() + b.matrix[3][1] * self.y() + b.matrix[3][2] * self.z() + b.matrix[3][3] * self.w());
+        return result;
+    }
+}
+
+impl ops::Mul<Point> for Matrix
+{
+    type Output = Point;
+    fn mul(self, b: Point) -> Self::Output
+    {
+        let mut result = Point::new(0.0, 0.0, 0.0);
+        result.set_x(self.matrix[0][0] * b.x() + self.matrix[0][1] * b.y() + self.matrix[0][2] * b.z() + self.matrix[0][3] * b.w());
+        result.set_y(self.matrix[1][0] * b.x() + self.matrix[1][1] * b.y() + self.matrix[1][2] * b.z() + self.matrix[1][3] * b.w());
+        result.set_z(self.matrix[2][0] * b.x() + self.matrix[2][1] * b.y() + self.matrix[2][2] * b.z() + self.matrix[2][3] * b.w());
+        result.set_w(self.matrix[3][0] * b.x() + self.matrix[3][1] * b.y() + self.matrix[3][2] * b.z() + self.matrix[3][3] * b.w());
+        return result;
+    }
+}
+
+impl ops::Mul<Point> for &Matrix
+{
+    type Output = Point;
+    fn mul(self, b: Point) -> Self::Output
+    {
+        let mut result = Point::new(0.0, 0.0, 0.0);
+        result.set_x(self.matrix[0][0] * b.x() + self.matrix[0][1] * b.y() + self.matrix[0][2] * b.z() + self.matrix[0][3] * b.w());
+        result.set_y(self.matrix[1][0] * b.x() + self.matrix[1][1] * b.y() + self.matrix[1][2] * b.z() + self.matrix[1][3] * b.w());
+        result.set_z(self.matrix[2][0] * b.x() + self.matrix[2][1] * b.y() + self.matrix[2][2] * b.z() + self.matrix[2][3] * b.w());
+        result.set_w(self.matrix[3][0] * b.x() + self.matrix[3][1] * b.y() + self.matrix[3][2] * b.z() + self.matrix[3][3] * b.w());
+        return result;
+    }
+}
+
+impl ops::Mul<&Point> for Matrix
+{
+    type Output = Point;
+    fn mul(self, b: &Point) -> Self::Output
+    {
+        let mut result = Point::new(0.0, 0.0, 0.0);
+        result.set_x(self.matrix[0][0] * b.x() + self.matrix[0][1] * b.y() + self.matrix[0][2] * b.z() + self.matrix[0][3] * b.w());
+        result.set_y(self.matrix[1][0] * b.x() + self.matrix[1][1] * b.y() + self.matrix[1][2] * b.z() + self.matrix[1][3] * b.w());
+        result.set_z(self.matrix[2][0] * b.x() + self.matrix[2][1] * b.y() + self.matrix[2][2] * b.z() + self.matrix[2][3] * b.w());
+        result.set_w(self.matrix[3][0] * b.x() + self.matrix[3][1] * b.y() + self.matrix[3][2] * b.z() + self.matrix[3][3] * b.w());
+        return result;
+    }
+}
+
+impl ops::Mul<&Point> for &Matrix
+{
+    type Output = Point;
+    fn mul(self, b: &Point) -> Self::Output
+    {
+        let mut result = Point::new(0.0, 0.0, 0.0);
+        result.set_x(self.matrix[0][0] * b.x() + self.matrix[0][1] * b.y() + self.matrix[0][2] * b.z() + self.matrix[0][3] * b.w());
+        result.set_y(self.matrix[1][0] * b.x() + self.matrix[1][1] * b.y() + self.matrix[1][2] * b.z() + self.matrix[1][3] * b.w());
+        result.set_z(self.matrix[2][0] * b.x() + self.matrix[2][1] * b.y() + self.matrix[2][2] * b.z() + self.matrix[2][3] * b.w());
+        result.set_w(self.matrix[3][0] * b.x() + self.matrix[3][1] * b.y() + self.matrix[3][2] * b.z() + self.matrix[3][3] * b.w());
+        return result;
     }
 }
 //#endregion
