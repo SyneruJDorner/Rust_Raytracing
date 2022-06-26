@@ -24,7 +24,7 @@ impl Emmision
     }
 
     #[allow(dead_code)]
-    pub fn set(color: Color) -> Emmision
+    pub fn from_color(color: Color) -> Emmision
     {
         Emmision
         {

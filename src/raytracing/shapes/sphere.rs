@@ -58,7 +58,7 @@ impl Sphere
         let local_point = inverse * world_point;
         let local_normal = local_point - Point::new(0.0, 0.0, 0.0);
         let world_normal = Tuple::from(inverse.transpose() * local_normal.to_tuple()).to_vector();
-        return world_normal.normalize()
+        return world_normal.normalize();
     }
 }
 

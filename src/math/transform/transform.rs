@@ -54,19 +54,9 @@ impl Transform
     #[allow(dead_code)]
     pub fn set_rotation(&mut self, x: f64, y: f64, z: f64) -> Self
     {
-        let angle_x = x.to_radians();
-        let angle_y = y.to_radians();
-        let angle_z = z.to_radians();
-
-        //Handle X Rotation
-        let rotate_x_matrix = self.set_rotation_x(angle_x).transform;
-        let rotate_y_matrix = self.set_rotation_y(angle_y).transform;
-        let rotate_z_matrix = self.set_rotation_z(angle_z).transform;
-
-        self.rotation = Vector3::new(x, y, z);
-        self.transform = rotate_x_matrix * self.transform;
-        self.transform = rotate_y_matrix * self.transform;
-        self.transform = rotate_z_matrix * self.transform;
+        self.set_rotation_x(x);
+        self.set_rotation_y(y);
+        self.set_rotation_z(z);
         return *self;
     }
 

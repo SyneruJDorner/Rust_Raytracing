@@ -1,12 +1,10 @@
-//use crate::constant::INFINITY;
-use crate::EPSILON;
-use crate::Tuple;
 use crate::Vector3;
 //use crate::AABB;
 use crate::Ray;
 use crate::Hittable;
 use crate::HitRecord;
 use crate::Material;
+use crate::Lambertian;
 use crate::Transform;
 use uuid::Uuid;
 
@@ -17,62 +15,36 @@ pub struct Plane
 {
     pub uuid: Uuid,
     pub transform: Transform,
-    // pub width: f64,
-    // pub height: f64,
     pub material: Material,
     //pub aabb_bounds: AABB,
-
-    // x0: f64,
-    // x1: f64,
-    // y0: f64,
-    // y1: f64
 }
 
 impl Plane
 {
     #[allow(dead_code)]
-    pub fn new(transform: Transform, material: Material) -> Plane
+    pub fn new() -> Plane
     {
-        // let object_potsition = Point::new(0.0, 0.0, 0.0);
-        // let half_width = width / 2.0;
-        // let half_height = height / 2.0;
-        // let _x0 = object_potsition.x() - half_width;
-        // let _x1 = object_potsition.x() + half_width;
-        // let _y0 = object_potsition.y() - half_height;
-        // let _y1 = object_potsition.y() + half_height;
-
         Plane
         {
             uuid: Uuid::new_v4(),
-            transform: transform,
-            // width: width,
-            // height: height,
-            // x0: _x0,
-            // x1: _x1,
-            // y0: _y0,
-            // y1: _y1,
-            material: material,
+            transform: Transform::new(),
+            material: Material::Lambertian(Lambertian::new(1.0, 1.0, 1.0))
             //aabb_bounds: Plane::aabb_bounds(_x0, _x1, _y0, _y1, transform.position.z)
         }
     }
 
-    pub fn normal_at(&self) -> Vector3
+    pub fn calculate_hit(&self, intersection_distance: f64, world_ray: Ray) -> HitRecord
     {
-        let inverse = self.transform.transform.inverse().unwrap();
-        let local_normal = Vector3::new(0.0, 1.0, 0.0);
-        let normal = inverse.transpose() * local_normal;
-        let world_normal = Tuple::from(normal.to_tuple());
-        let world_normal = Vector3::new(world_normal.x(), world_normal.y(), world_normal.z());
-        world_normal.normalize()
+        //Calcaulte the normal of the plane at the intersection point
+        let hit_point = world_ray.at(intersection_distance);
+        let direction = world_ray.direction.normalize();
+        let normal = self.normal_at().normalize();
+        return HitRecord::new(self.uuid, intersection_distance, hit_point, direction, normal, self.material);
     }
 
-    pub fn calculate_hit(&self, intersection: f64, world_ray: Ray) -> HitRecord
+    pub fn normal_at(&self) -> Vector3
     {
-        let world_point = world_ray.at_local(intersection);
-        let distance = intersection;
-        let inverted_dir = -world_ray.direction;
-        let normal = self.normal_at();
-        return HitRecord::new(self.uuid, distance, world_point, inverted_dir, normal, self.material);
+        return Vector3::new(0.0, 1.0, 0.0);
     }
 }
 
@@ -90,12 +62,28 @@ impl Hittable for Plane
 
         let local_ray = world_ray.transform(inverse.unwrap());
 
-        if local_ray.direction.y().abs() < EPSILON
+        if local_ray.direction.y().abs() < 0.001
         {
             return None;
         }
 
         let distance = -local_ray.origin.y() / local_ray.direction.y();
+
+        if distance < 0.0
+        {
+            return None;
+        }
+
+        //Determine if the hit is within the bounds of the plane
+        let hit_point = local_ray.at(distance);
+        if hit_point.x() < 0.0 - (self.transform.scale.x() / 2.0) ||
+           hit_point.x() > 0.0 + (self.transform.scale.x() / 2.0) ||
+           hit_point.z() < 0.0 - (self.transform.scale.y() / 2.0) ||
+           hit_point.z() > 0.0 + (self.transform.scale.y() / 2.0)
+        {
+            return None;
+        }
+
         return Some(self.calculate_hit(distance, world_ray));
     }
 

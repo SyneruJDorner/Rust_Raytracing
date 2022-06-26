@@ -104,6 +104,12 @@ impl Color
     }
 
     #[allow(dead_code)]
+    pub fn pink() -> Color
+    {
+        return Color(Tuple::new(0.98431372549, 0.28235294117, 0.76862745098, 0.0));
+    }
+
+    #[allow(dead_code)]
     pub fn teal() -> Color
     {
         return Color(Tuple::new(0.0, 0.50196078431, 0.50196078431, 0.0));

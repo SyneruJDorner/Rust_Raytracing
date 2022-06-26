@@ -59,7 +59,7 @@ impl Ray
         if hit.is_some()
         {
             let closest_hit = hit.unwrap();
-            let scatter = closest_hit.material.scatter(closest_hit);//.scatter(&ray, &closest_hit);
+            let scatter = closest_hit.material.scatter(closest_hit);
             let emitted = closest_hit.material.emitted(closest_hit);
             let emmittion = emitted.unwrap();
 
