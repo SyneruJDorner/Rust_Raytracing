@@ -8,7 +8,8 @@ This project is to test my knowledge in rust, by building on top of my knowledge
 
 **Currently working features:**<br/>
 - Basic raytracing of spheres and planes.
-- Moving and rotating the camera using vector3.
+- Moving and rotating the camera using Vector3.
+- Moving, Rotation and Scaling using Vector3.
 - Materials: Albedo, Metal, Glass, Emission.
 - Basic lighting and shadows.
 - Anti-Aliasing.
@@ -17,7 +18,6 @@ This project is to test my knowledge in rust, by building on top of my knowledge
 
 **Need to Implement:**<br/>
 - Different light types.
-- Moving, Rotation and Scaling shapes and models.
 - Different shapes.
 - Loading textures.
 - Loading Meshes/Models.
