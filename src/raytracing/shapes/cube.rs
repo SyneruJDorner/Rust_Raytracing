@@ -8,19 +8,19 @@ use crate::Transform;
 use uuid::Uuid;
 
 #[derive(Copy, Debug, Clone)]
-pub struct Plane
+pub struct Cube
 {
     pub uuid: Uuid,
     pub transform: Transform,
     pub material: Material
 }
 
-impl Plane
+impl Cube
 {
     #[allow(dead_code)]
-    pub fn new() -> Plane
+    pub fn new() -> Cube
     {
-        Plane
+        Cube
         {
             uuid: Uuid::new_v4(),
             transform: Transform::new(),
@@ -30,7 +30,7 @@ impl Plane
 
     pub fn calculate_hit(&self, intersection_distance: f64, world_ray: Ray) -> HitRecord
     {
-        //Calcaulte the normal of the plane at the intersection point
+        //Calcaulte the normal of the Cube at the intersection point
         let hit_point = world_ray.at(intersection_distance);
         let direction = world_ray.direction.normalize();
         let normal = self.normal_at().normalize();
@@ -43,7 +43,7 @@ impl Plane
     }
 }
 
-impl Hittable for Plane 
+impl Hittable for Cube 
 {
     #[inline(always)]
     fn hit(&self, world_ray: Ray) -> Option<HitRecord>
@@ -69,7 +69,7 @@ impl Hittable for Plane
             return None;
         }
 
-        //Determine if the hit is within the bounds of the plane
+        //Determine if the hit is within the bounds of the Cube
         let hit_point = local_ray.at(distance);
         let p1 = hit_point.x() < 0.0 - (self.transform.scale.x() / 2.0);
         let p2 = hit_point.x() > 0.0 + (self.transform.scale.x() / 2.0);

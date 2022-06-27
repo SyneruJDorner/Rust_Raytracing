@@ -30,9 +30,9 @@ impl Ray
         }
     }
 
-    pub fn at(&self, t: f64) -> Point
+    pub fn at(&self, distance: f64) -> Point
     {
-        return self.origin + t * self.direction;
+        return self.origin + distance * self.direction;
     }
 
     pub fn transform(&self, m: Matrix) -> Ray

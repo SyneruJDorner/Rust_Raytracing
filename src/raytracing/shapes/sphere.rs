@@ -8,7 +8,6 @@ use crate::Material;
 use crate::Lambertian;
 use crate::Transform;
 use uuid::Uuid;
-
 use libm::{fmin, fmax};
 
 #[derive(Copy, Debug, Clone)]
@@ -16,8 +15,7 @@ pub struct Sphere
 {
     pub uuid: Uuid,
     pub transform: Transform,
-    pub material: Material,
-    //pub aabb_bounds: AABB,
+    pub material: Material
 }
 
 impl Sphere
@@ -32,17 +30,8 @@ impl Sphere
             uuid: Uuid::new_v4(),
             transform: Transform::new(),
             material: default_material
-            //aabb_bounds:Sphere::aabb_bounds(transform.position, radius)
         }
     }
-
-    // fn aabb_bounds(center: Vector3, radius: f64) -> AABB
-    // {
-    //     let min = center - Vector3::vec3(radius, radius, radius);
-    //     let max = center + Vector3::vec3(radius, radius, radius);
-    //     let output_box = AABB::new(&min, &max);
-    //     return output_box;
-    // }
 
     pub fn calculate_hit(&self, intersection_distance: f64, world_ray: Ray) -> HitRecord
     {
@@ -104,43 +93,8 @@ impl Hittable for Sphere
         return Some(self.calculate_hit(closest_hit, world_ray));
     }
 
-    // fn hit_aabb_bounds(&self, ray: &Ray) -> bool
-    // {
-    //     let min = self.aabb_bounds.min;
-    //     let max = self.aabb_bounds.max;
-    //     let mut tmin = -INFINITY;
-    //     let mut tmax = INFINITY;
-
-    //     let direction_x = ray.direction.x();
-    //     if direction_x > 0.0
-    //     {
-    //         let tx1 = (min.x - ray.origin.x()) * direction_x;
-    //         let tx2 = (max.x - ray.origin.x()) * direction_x;
-
-    //         tmin = fmin(tx1 as f64, tx2 as f64);
-    //         tmax = fmax(tx1 as f64, tx2 as f64);
-    //     }
-
-    //     let direction_y = ray.direction.y();
-    //     if direction_y > 0.0
-    //     {
-    //         let ty1 = (min.y - ray.origin.y()) * direction_y;
-    //         let ty2 = (max.y - ray.origin.y()) * direction_y;
-
-    //         tmin = fmax(tmin, fmin(ty1 as f64, ty2 as f64));
-    //         tmax = fmin(tmax, fmax(ty1 as f64, ty2 as f64));
-    //     }
-
-    //     let direction_z = ray.direction.z();
-    //     if direction_z > 0.0
-    //     {
-    //         let tz1 = (min.z - ray.origin.z()) * direction_z;
-    //         let tz2 = (max.z - ray.origin.z()) * direction_z;
-
-    //         tmin = fmax(tmin as f64, fmin(tz1 as f64, tz2 as f64));
-    //         tmax = fmin(tmax as f64, fmax(tz1 as f64, tz2 as f64));
-    //     }
-
-    //     return tmax > fmax(tmin, 0.0);
-    // }
+    fn hit_aabb(&self, world_ray: Ray) -> bool
+    {
+        return self.transform.aabb_bounds.hit(world_ray);
+    }
 }

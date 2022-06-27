@@ -22,15 +22,31 @@ https://www.youtube.com/watch?v=uRJCi0dlU4U
 https://github.com/iweinbau/Ray-Tracing
 */
 
+//Settings
 #[path = "settings/settings.rs"] mod settings;
+pub use settings::Settings as Settings;
+
+//Maths
 #[path = "math/constant/constant.rs"] mod constant;
 #[path = "math/tuple/tuple.rs"] mod tuple;
 #[path = "math/tuple/point/point.rs"] mod point;
+#[path = "math/tuple/vector2/vector2.rs"] mod vector2;
 #[path = "math/tuple/vector3/vector3.rs"] mod vector3;
 #[path = "math/tuple/color/color.rs"] mod color;
 #[path = "math/matrix/matrix.rs"] mod matrix;
 #[path = "math/transform/transform.rs"] mod transform;
 #[path = "math/utils/utils.rs"] mod utils;
+pub use constant::*;
+pub use tuple::Tuple as Tuple;
+pub use point::Point as Point;
+pub use vector2::Vector2 as Vector2;
+pub use vector3::Vector3 as Vector3;
+pub use color::Color as Color;
+pub use matrix::Matrix as Matrix;
+pub use transform::Transform as Transform;
+pub use utils::*;
+
+//Raytracing
 #[path = "raytracing/ray/ray.rs"] mod ray;
 #[path = "raytracing/camera/camera.rs"] mod camera;
 #[path = "raytracing/material/material.rs"] mod material;
@@ -38,16 +54,10 @@ https://github.com/iweinbau/Ray-Tracing
 #[path = "raytracing/hittable/hittablelist.rs"] mod hittablelist;
 #[path = "raytracing/shapes/sphere.rs"] mod sphere;
 #[path = "raytracing/shapes/plane.rs"] mod plane;
-
-pub use settings::Settings as Settings;
-pub use constant::*;
-pub use tuple::Tuple as Tuple;
-pub use point::Point as Point;
-pub use vector3::Vector3 as Vector3;
-pub use color::Color as Color;
-pub use matrix::Matrix as Matrix;
-pub use transform::Transform as Transform;
-pub use utils::*;
+#[path = "raytracing/shapes/triangle.rs"] mod triangle;
+#[path = "raytracing/shapes/cube.rs"] mod cube;
+#[path = "raytracing/aabb/aabb.rs"] mod aabb;
+#[path = "raytracing/line/line.rs"] mod line;
 pub use ray::Ray as Ray;
 pub use camera::Camera as Camera;
 pub use material::Material as Material;
@@ -63,3 +73,9 @@ pub use hittable::HitRecord as HitRecord;
 pub use hittablelist::HittableList as HittableList;
 pub use sphere::Sphere as Sphere;
 pub use plane::Plane as Plane;
+pub use triangle::Triangle as Triangle;
+pub use cube::Cube as Cube;
+pub use aabb::AABB as AABB;
+pub use line::*;
+
+extern crate pbr;

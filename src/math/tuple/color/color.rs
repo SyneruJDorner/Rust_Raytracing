@@ -170,7 +170,7 @@ impl Color
     }
 
     #[allow(dead_code)]
-    pub fn write_color(rgb: Color, samples_per_pixel: u32)
+    pub fn write_color(rgb: Color, samples_per_pixel: u32) -> String
     {
         let mut r = rgb.r();
         let mut g = rgb.g();
@@ -185,6 +185,6 @@ impl Color
         let ig = (255.99 * clamp(g, 0.0, 0.999)) as i32;
         let ib = (255.99 * clamp(b, 0.0, 0.999)) as i32;
 
-        println!("{} {} {}", ir, ig, ib);
+        return format!("{} {} {}", ir, ig, ib);
     }
 }

@@ -43,15 +43,7 @@ fn lighting_demo() -> HittableList
     world.add(Box::new(metal_sphere));
 
 
-    //BACK SPHERES
-    let mut emmision_sphere = Sphere::new();
-    emmision_sphere.transform.set_scale(1.0, 1.0, 1.0);
-    emmision_sphere.transform.set_rotation(0.0, -90.0, 0.0);
-    emmision_sphere.transform.set_position(-2.0, 1.0, -6.0);
-    let emmision_mat = Material::Emmition(Emmision::from_color(Color::pink()));
-    emmision_sphere.material = emmision_mat;
-    world.add(Box::new(emmision_sphere));
-
+    //BACK SPHERE
     let mut albedo_sphere = Sphere::new();
     albedo_sphere.transform.set_scale(1.0, 1.0, 1.0);
     albedo_sphere.transform.set_rotation(0.0, 0.0, 0.0);
@@ -60,14 +52,33 @@ fn lighting_demo() -> HittableList
     albedo_sphere.material = albedo_mat;
     world.add(Box::new(albedo_sphere));
 
-    let mut emmision_sphere = Sphere::new();
-    emmision_sphere.transform.set_scale(1.0, 1.0, 1.0);
-    emmision_sphere.transform.set_rotation(0.0, 0.0, 0.0);
-    emmision_sphere.transform.set_position(2.0, 1.0, -6.0);
-    let emmision_mat = Material::Emmition(Emmision::from_color(Color::teal()));
-    emmision_sphere.material = emmision_mat;
-    world.add(Box::new(emmision_sphere));
 
+    //FRONT TRIANGLES
+    let mut albedo_triangle = Triangle::new();
+    albedo_triangle.transform.set_scale(1.0, 1.0, 1.0);
+    albedo_triangle.transform.set_rotation(90.0, 0.0, -45.0);
+    albedo_triangle.transform.set_position(1.0, 1.0, 4.0);
+    let albedo_mat = Material::Lambertian(Lambertian::from_color(Color::pink()));
+    albedo_triangle.material = albedo_mat;
+    world.add(Box::new(albedo_triangle));
+
+    let mut albedo_triangle = Plane::new();
+    albedo_triangle.transform.set_scale(1.0, 1.0, 1.0);
+    albedo_triangle.transform.set_rotation(90.0, 0.0, -45.0);
+    albedo_triangle.transform.set_position(-1.0, 1.0, 4.0);
+    let albedo_mat = Material::Lambertian(Lambertian::from_color(Color::teal()));
+    albedo_triangle.material = albedo_mat;
+    world.add(Box::new(albedo_triangle));
+
+
+    // //FRONT CUBE
+    // let mut albedo_cube = Cube::new();
+    // albedo_cube.transform.set_scale(1.0, 1.0, 1.0);
+    // albedo_cube.transform.set_rotation(90.0, 0.0, 0.0);
+    // albedo_cube.transform.set_position(0.0, 1.0, 0.0);
+    // let albedo_mat = Material::Lambertian(Lambertian::from_color(Color::pink()));
+    // albedo_cube.material = albedo_mat;
+    // world.add(Box::new(albedo_cube));
 
 
     //PLANES

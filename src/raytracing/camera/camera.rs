@@ -2,13 +2,18 @@ use uuid::Uuid;
 
 use crate::Settings;
 use crate::random_float;
+use crate::Vector2;
 use crate::Vector3;
 use crate::Color;
 use crate::Ray;
 use crate::Transform;
 use crate::HittableList;
+use pbr::ProgressBar;
+use crate::drawline;
 
 use map_3d::deg2rad;
+use std::fs::File;
+use std::io::prelude::*;
 
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Camera
@@ -91,11 +96,19 @@ impl Camera
         self.aspect_ratio = aspect_ratio;
         return *self;
     }
-    
+
     //Calculates the ray relative to the cameras position and rotation
     pub fn trace(&mut self, world: HittableList)
     {
-        println!("P3\n{} {}\n255", Settings::get_image_width(), Settings::get_image_height());
+        let header_size = 3;
+        let pixel_array_size = header_size + Settings::get_image_width() * Settings::get_image_height();
+        let mut pixels = vec![String::new(); pixel_array_size as usize];
+        let mut pb = ProgressBar::new(100);
+        
+        //Add header to the pixels array image
+        pixels[0] = String::from("P3");
+        pixels[1] = String::from(format!("{} {}", Settings::get_image_width(), Settings::get_image_height()));
+        pixels[2] = String::from(format!("255"));
 
         for y in 0..Settings::get_image_height()
         {
@@ -107,8 +120,29 @@ impl Camera
                     let ray = self.prepare_ray(x, y);
                     pixel_color += Ray::calcaulte_ray(ray, &world, Settings::get_max_depth());
                 }
-                Color::write_color(pixel_color, Settings::get_samples_per_pixel());
+
+                let pixel_index = (header_size + (y * Settings::get_image_width() + x)) as usize;
+                let color_string = Color::write_color(pixel_color, Settings::get_samples_per_pixel());
+                pixels[pixel_index] = color_string;
             }
+            pb.set((y as f64 / Settings::get_image_height() as f64 * 100.0).ceil() as u64);
         }
+        pb.finish();
+
+        //Apply any line debugging here!
+        drawline(&mut pixels, Vector2::new(0.0, 0.0),       Vector2::new(100.0, 100.0),     Color::new(0.0, 1.0, 0.0));
+        drawline(&mut pixels, Vector2::new(700.0, 500.0),   Vector2::new(800.0, 600.0),     Color::new(0.0, 1.0, 0.0));
+        drawline(&mut pixels, Vector2::new(700.0, 100.0),   Vector2::new(800.0, 0.0),       Color::new(0.0, 1.0, 0.0));
+        drawline(&mut pixels, Vector2::new(100.0, 500.0),   Vector2::new(0.0, 600.0),       Color::new(0.0, 1.0, 0.0));
+        
+        //Write all the array to a file
+        let mut file = File::create("image.ppm").unwrap();
+        for pixel in pixels
+        {
+            file.write_all(pixel.as_bytes()).unwrap();
+            file.write_all(b"\n").unwrap();
+        }
+
+        println!("Image created!");
     }
 }

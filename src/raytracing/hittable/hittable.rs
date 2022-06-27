@@ -37,5 +37,5 @@ impl HitRecord
 pub trait Hittable
 {
     fn hit(&self, world_ray: Ray) -> Option<HitRecord>;
-    //fn hit_aabb_bounds(&self, ray: &Ray) -> bool;
+    fn hit_aabb(&self, world_ray: Ray) -> bool;
 }

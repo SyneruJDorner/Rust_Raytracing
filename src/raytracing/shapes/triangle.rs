@@ -8,19 +8,19 @@ use crate::Transform;
 use uuid::Uuid;
 
 #[derive(Copy, Debug, Clone)]
-pub struct Plane
+pub struct Triangle
 {
     pub uuid: Uuid,
     pub transform: Transform,
     pub material: Material
 }
 
-impl Plane
+impl Triangle
 {
     #[allow(dead_code)]
-    pub fn new() -> Plane
+    pub fn new() -> Triangle
     {
-        Plane
+        Triangle
         {
             uuid: Uuid::new_v4(),
             transform: Transform::new(),
@@ -30,7 +30,7 @@ impl Plane
 
     pub fn calculate_hit(&self, intersection_distance: f64, world_ray: Ray) -> HitRecord
     {
-        //Calcaulte the normal of the plane at the intersection point
+        //Calcaulte the normal of the Triangle at the intersection point
         let hit_point = world_ray.at(intersection_distance);
         let direction = world_ray.direction.normalize();
         let normal = self.normal_at().normalize();
@@ -43,7 +43,7 @@ impl Plane
     }
 }
 
-impl Hittable for Plane 
+impl Hittable for Triangle 
 {
     #[inline(always)]
     fn hit(&self, world_ray: Ray) -> Option<HitRecord>
@@ -74,7 +74,10 @@ impl Hittable for Plane
         let p1 = hit_point.x() < 0.0 - (self.transform.scale.x() / 2.0);
         let p2 = hit_point.x() > 0.0 + (self.transform.scale.x() / 2.0);
         let p3 = hit_point.z() < 0.0 - (self.transform.scale.z() / 2.0);
-        let p4 = hit_point.z() > 0.0 + (self.transform.scale.z() / 2.0);
+
+        //Determine the diagonal of a triangle, then use the hit uv to determine if the hit is within the triangle
+        let p4 = hit_point.x() + hit_point.z() > -(self.transform.scale.x() / 2.0) + (self.transform.scale.z() / 2.0);
+
         if p1 || p2 || p3 || p4
         {
             return None;

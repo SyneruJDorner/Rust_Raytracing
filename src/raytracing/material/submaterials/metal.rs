@@ -31,7 +31,7 @@ impl Metal
     }
 
     #[allow(dead_code)]
-    pub fn set(albedo: Color, mut fuzz: f64) -> Metal
+    pub fn from_color(albedo: Color, mut fuzz: f64) -> Metal
     {
         if fuzz > 1.0
         {

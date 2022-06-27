@@ -24,9 +24,12 @@ impl Lambertian
     }
 
     #[allow(dead_code)]
-    pub fn set(albedo: Color) -> Lambertian
+    pub fn from_color(color: Color) -> Lambertian
     {
-        Lambertian { albedo }
+        Lambertian
+        {
+            albedo: color
+        }
     }
 }
 

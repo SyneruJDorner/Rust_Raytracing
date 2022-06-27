@@ -4,6 +4,7 @@ use crate::Color;
 use crate::random_float;
 use crate::PI;
 use crate::Point;
+use libm::{fmin, fmax};
 
 mod operators
 {
@@ -23,6 +24,18 @@ impl Vector3
     pub fn new(x: f64, y: f64, z: f64) -> Vector3
     {
         return Vector3(Tuple::new(x, y, z, 0.0));
+    }
+
+    #[allow(dead_code)]
+    pub fn zero() -> Vector3
+    {
+        return Vector3(Tuple::new(0.0, 0.0, 0.0, 0.0));
+    }
+
+    #[allow(dead_code)]
+    pub fn one() -> Vector3
+    {
+        return Vector3(Tuple::new(1.0, 1.0, 1.0, 0.0));
     }
 
     #[allow(dead_code)]
@@ -110,9 +123,9 @@ impl Vector3
     }
 
     #[allow(dead_code)]
-    pub fn cross(&self, other: Vector3) -> Vector3
+    pub fn cross(a: Vector3, b: Vector3) -> Vector3
     {
-        return Vector3::new(self.y() * other.z() - self.z() * other.y(), self.z() * other.x() - self.x() * other.z(), self.x() * other.y() - self.y() * other.x());
+        return Vector3::new(a.y() * b.z() - a.z() * b.y(), a.z() * b.x() - a.x() * b.z(), a.x() * b.y() - a.y() * b.x());
     }
 
     #[allow(dead_code)]
@@ -154,6 +167,24 @@ impl Vector3
     pub fn inverse(a: Vector3) -> Vector3
     {
         return Vector3::new(-a.x(), -a.y(), -a.z());
+    }
+
+    #[allow(dead_code)]
+    pub fn min(a: Vector3, b: Vector3) -> Vector3
+    {
+        let min_x = fmin(a.x(), b.x());
+        let min_y = fmin(a.y(), b.y());
+        let min_z = fmin(a.z(), b.z());
+        return Vector3::new(min_x, min_y, min_z);
+    }
+
+    #[allow(dead_code)]
+    pub fn max(a: Vector3, b: Vector3) -> Vector3
+    {
+        let max_x = fmax(a.x(), b.x());
+        let max_y = fmax(a.y(), b.y());
+        let max_z = fmax(a.z(), b.z());
+        return Vector3::new(max_x, max_y, max_z);
     }
 
     #[allow(dead_code)]

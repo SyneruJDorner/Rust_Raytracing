@@ -3,6 +3,7 @@ use std::ops::Mul;
 use crate::Matrix;
 use crate::Point;
 use crate::Vector3;
+use crate::AABB;
 
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Transform
@@ -10,7 +11,8 @@ pub struct Transform
     pub transform: Matrix,
     pub position: Point,
     pub rotation: Vector3,
-    pub scale: Vector3
+    pub scale: Vector3,
+    pub aabb_bounds: AABB,
 }
 
 impl Transform
@@ -23,7 +25,8 @@ impl Transform
             transform: Matrix::identity(),
             position: Point::new(0.0, 0.0, 0.0),
             rotation: Vector3::new(0.0, 0.0, 0.0),
-            scale: Vector3::new(1.0, 1.0, 1.0)
+            scale: Vector3::new(1.0, 1.0, 1.0),
+            aabb_bounds: AABB::new()
         };
     }
 
@@ -36,6 +39,7 @@ impl Transform
         transform_matrix.matrix[2][3] = z;
         self.position = Point::new(x, y, z);
         self.transform = transform_matrix * self.transform;
+        self.aabb_bounds = AABB::calcaulte_aabb_bounds(self);
         return *self;
     }
 
@@ -48,6 +52,7 @@ impl Transform
         scale_matrix.matrix[2][2] = z;
         self.scale = Vector3::new(x, y, z);
         self.transform = scale_matrix * self.transform;
+        self.aabb_bounds = AABB::calcaulte_aabb_bounds(self);
         return *self;
     }
 
@@ -74,6 +79,7 @@ impl Transform
 
         self.rotation.set_x(x);
         self.transform = rotate_x_matrix * self.transform;
+        self.aabb_bounds = AABB::calcaulte_aabb_bounds(self);
         return *self;
     }
 
@@ -91,6 +97,7 @@ impl Transform
 
         self.rotation.set_y(y);
         self.transform = rotate_y_matrix * self.transform;
+        self.aabb_bounds = AABB::calcaulte_aabb_bounds(self);
         return *self;
     }
 
@@ -108,6 +115,7 @@ impl Transform
 
         self.rotation.set_z(z);
         self.transform = rotate_z_matrix * self.transform;
+        self.aabb_bounds = AABB::calcaulte_aabb_bounds(self);
         return *self;
     }
 
@@ -122,8 +130,21 @@ impl Transform
         shearing_matrix.matrix[2][0] = z_x;
         shearing_matrix.matrix[2][1] = z_y;
         self.transform = shearing_matrix * self.transform;
+        self.aabb_bounds = AABB::calcaulte_aabb_bounds(self);
         return *self;
     }
+
+    // fn calcaulte_aabb_bounds(&self) -> AABB
+    // {
+    //     let min_x = self.position.x() - (self.scale.x() / 2.0);
+    //     let max_x = self.position.x() + (self.scale.x() / 2.0);
+    //     let min_y = self.position.y() - (self.scale.y() / 2.0);
+    //     let max_y = self.position.y() + (self.scale.y() / 2.0);
+    //     let min_z = self.position.z() - (self.scale.z() / 2.0);
+    //     let max_z = self.position.z() + (self.scale.z() / 2.0);
+    //     let output_box = AABB::set(Vector3::new(min_x, min_y, min_z), Vector3::new(max_x, max_y, max_z));
+    //     return output_box;
+    // }
 }
 
 impl Default for Transform
