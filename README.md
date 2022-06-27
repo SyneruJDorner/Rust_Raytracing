@@ -8,12 +8,12 @@ This project is to test my knowledge in rust, by building on top of my knowledge
 
 **Currently working features:**<br/>
 - Basic raytracing of spheres and planes.
-- Moving and rotating the camera using Vector3.
-- Moving, Rotation and Scaling using Vector3.
+- Moving and rotating the camera using Vector3 ontop of a matrix 4x4.
+- Moving, Rotation and Scaling shapes using Vector3 ontop of a matrix 4x4.
 - Materials: Albedo, Metal, Glass, Emission.
 - Basic lighting and shadows.
 - Anti-Aliasing.
-- Settings (though settings.ini file) 
+- Settings (though settings.ini file) .
 <br/>
 
 **Need to Implement:**<br/>
@@ -23,6 +23,8 @@ This project is to test my knowledge in rust, by building on top of my knowledge
 - Loading Meshes/Models.
 - Look into glTF { https://www.khronos.org/gltf/ }.
 - Threading and Multi-Core Processing.
+- General Optimizations.
+- Command line feedback, like rendering progress.
 <br/>
 
 **How to run:**<br/>
@@ -53,3 +55,4 @@ This project is to test my knowledge in rust, by building on top of my knowledge
 
 ![Prefab](https://github.com/justindd1994/Rust_Raytracing/blob/master/images/ray-tracing-demo-5.png)<br/>
 ![Prefab](https://github.com/justindd1994/Rust_Raytracing/blob/master/images/ray-tracing-demo-6.png)<br/>
+![Prefab](https://github.com/justindd1994/Rust_Raytracing/blob/master/images/ray-tracing-demo-7.png)<br/>
