@@ -7,13 +7,16 @@ This project is to test my knowledge in rust, by building on top of my knowledge
 <br/>
 
 **Currently working features:**<br/>
-- Basic raytracing of spheres and planes.
+- Basic raytracing of spheres, triangles and planes.
 - Moving and rotating the camera using Vector3 ontop of a matrix 4x4.
 - Moving, Rotation and Scaling shapes using Vector3 ontop of a matrix 4x4.
 - Materials: Albedo, Metal, Glass, Emission.
 - Basic lighting and shadows.
 - Anti-Aliasing.
-- Settings (though settings.ini file) .
+- Basic AABB without BVH.
+- Settings (though settings.ini file).
+- Debugging normals.
+- Command line feedback, like rendering progress.
 <br/>
 
 **Need to Implement:**<br/>
@@ -24,14 +27,15 @@ This project is to test my knowledge in rust, by building on top of my knowledge
 - Look into glTF { https://www.khronos.org/gltf/ }.
 - Threading and Multi-Core Processing.
 - General Optimizations.
-- Command line feedback, like rendering progress.
+- Debugging AABB.
+- BVH
 <br/>
 
 **How to run:**<br/>
 - Have Rust installed.
 - Navigate to the cloned directory.
-- Run it using the command "cargo run .\main.rs > image.ppm".
-- This will generate an image in .ppm format, you may will need a Mac to open it or use a website to open and view it.
+- Run it using the command "cargo run .\main.rs".
+- This will generate an image titled "image.ppm" format, you may will need a Mac to open it or use a website to open and view it.
 <br/>
 
 **PPM Image Viewer:**<br/>
