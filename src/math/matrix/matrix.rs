@@ -51,6 +51,18 @@ impl Matrix
     }
 
     #[allow(dead_code)]
+    pub fn one() -> Matrix
+    {
+        Matrix
+        {
+            matrix: [[1.0, 1.0, 1.0, 1.0],
+                     [1.0, 1.0, 1.0, 1.0],
+                     [1.0, 1.0, 1.0, 1.0],
+                     [1.0, 1.0, 1.0, 1.0]]
+        }
+    }
+
+    #[allow(dead_code)]
     pub fn identity() -> Matrix
     {
         Matrix
@@ -147,7 +159,7 @@ impl Matrix
                     m.matrix[3][0], m.matrix[3][1], m.matrix[3][2], m.matrix[3][3]);
     }
 
-    pub fn equal_approx(&self, other: Self) -> bool
+    pub fn approximate(&self, other: Self) -> bool
     {
         const EPSILON: f64 = 0.0001;
         self.matrix.iter().flat_map(|x| x).zip(other.matrix.iter().flat_map(|y| y)).all(|(x, y)| (x - y).abs() < EPSILON)

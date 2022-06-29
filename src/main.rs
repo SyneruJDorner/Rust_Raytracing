@@ -103,6 +103,9 @@ fn lighting_demo() -> HittableList
 
 fn main()
 {
+    use std::time::Instant;
+    let now = Instant::now();
+
     // Image
     Settings::load();
 
@@ -117,4 +120,7 @@ fn main()
 
     // Render
     camera.trace(world);
+
+    let elapsed = now.elapsed();
+    println!("Rendder time: {:.2?}", elapsed);
 }

@@ -133,18 +133,6 @@ impl Transform
         self.aabb_bounds = AABB::calcaulte_aabb_bounds(self);
         return *self;
     }
-
-    // fn calcaulte_aabb_bounds(&self) -> AABB
-    // {
-    //     let min_x = self.position.x() - (self.scale.x() / 2.0);
-    //     let max_x = self.position.x() + (self.scale.x() / 2.0);
-    //     let min_y = self.position.y() - (self.scale.y() / 2.0);
-    //     let max_y = self.position.y() + (self.scale.y() / 2.0);
-    //     let min_z = self.position.z() - (self.scale.z() / 2.0);
-    //     let max_z = self.position.z() + (self.scale.z() / 2.0);
-    //     let output_box = AABB::set(Vector3::new(min_x, min_y, min_z), Vector3::new(max_x, max_y, max_z));
-    //     return output_box;
-    // }
 }
 
 impl Default for Transform
@@ -167,9 +155,9 @@ impl Mul<Point> for Transform
 {
     type Output = Point;
 
-    fn mul(self, rhs: Point) -> Self::Output
+    fn mul(self, b: Point) -> Self::Output
     {
-        self.transform * rhs
+        return self.transform * b;
     }
 }
 
@@ -177,8 +165,8 @@ impl Mul<Vector3> for Transform
 {
     type Output = Vector3;
 
-    fn mul(self, rhs: Vector3) -> Self::Output
+    fn mul(self, b: Vector3) -> Self::Output
     {
-        self.transform * rhs
+        return self.transform * b;
     }
 }

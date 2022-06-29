@@ -10,6 +10,7 @@ use crate::Transform;
 use crate::HittableList;
 use pbr::ProgressBar;
 use crate::drawline;
+use crate::clear_cmd;
 
 use map_3d::deg2rad;
 use std::fs::File;
@@ -100,6 +101,7 @@ impl Camera
     //Calculates the ray relative to the cameras position and rotation
     pub fn trace(&mut self, world: HittableList)
     {
+        clear_cmd();
         let header_size = 3;
         let pixel_array_size = header_size + Settings::get_image_width() * Settings::get_image_height();
         let mut pixels = vec![String::new(); pixel_array_size as usize];
@@ -142,7 +144,8 @@ impl Camera
             file.write_all(pixel.as_bytes()).unwrap();
             file.write_all(b"\n").unwrap();
         }
-
+        
+        clear_cmd();
         println!("Image created!");
     }
 }

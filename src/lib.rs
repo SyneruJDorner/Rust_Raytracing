@@ -78,4 +78,157 @@ pub use cube::Cube as Cube;
 pub use aabb::AABB as AABB;
 pub use line::*;
 
+#[path = "cmd_operations/cmd_operations.rs"] mod cmd;
+pub use cmd::*;
+
 extern crate pbr;
+
+#[cfg(test)]
+mod tests
+{
+    use super::*;
+
+    // #[test]
+    // fn test_mul_tuple_matrix()
+    // {
+    //     let result_mat = Matrix::identity();
+    //     let result = Tuple::new(1.0, 2.0, 3.0, 4.0) * result_mat;
+    //     println!("{:?}", result);
+    //     let expected = Matrix::set([[5.0,  0.0,  0.0,  0.0],
+    //                                 [0.0,  5.0,  0.0,  0.0],
+    //                                 [0.0,  0.0,  5.0,  0.0],
+    //                                 [0.0,  0.0,  0.0,  5.0]]);
+    //     assert!(result.approximate(expected));
+
+    //     let result_mat = Matrix::identity();
+    //     let result = result_mat * 5.0;
+    //     println!("{:?}", result);
+    //     let expected = Matrix::set([[5.0,  0.0,  0.0,  0.0],
+    //                                 [0.0,  5.0,  0.0,  0.0],
+    //                                 [0.0,  0.0,  5.0,  0.0],
+    //                                 [0.0,  0.0,  0.0,  5.0]]);
+    //     assert!(result.approximate(expected));
+    // }
+
+    //#region Matrix Multiplication 
+    #[test]
+    fn matrix_mul()
+    {
+        //=====================================================================//
+        let result_mat = Matrix::identity();
+        let result = 5.0 * result_mat;
+        let expected = Matrix::set([[5.0,  0.0,  0.0,  0.0],
+                                    [0.0,  5.0,  0.0,  0.0],
+                                    [0.0,  0.0,  5.0,  0.0],
+                                    [0.0,  0.0,  0.0,  5.0]]);
+        assert!(result.approximate(expected));
+        //=====================================================================//
+        let result_mat = Matrix::identity();
+        let result = result_mat * 5.0;
+        let expected = Matrix::set([[5.0,  0.0,  0.0,  0.0],
+                                    [0.0,  5.0,  0.0,  0.0],
+                                    [0.0,  0.0,  5.0,  0.0],
+                                    [0.0,  0.0,  0.0,  5.0]]);
+        assert!(result.approximate(expected));
+        //=====================================================================//
+        let result_mat_1 = Matrix::set([[5.0, 5.0, 3.0, 1.0],
+                                        [2.0, 4.0, 7.0, 8.0],
+                                        [9.0, 2.0, 6.0, 4.0],
+                                        [2.0, 3.0, 1.0, 5.0]]);
+
+        let result_mat_2 = Matrix::set([[1.0, 2.0, 3.0, 4.0],
+                                        [1.0, 2.0, 3.0, 4.0],
+                                        [1.0, 2.0, 3.0, 4.0],
+                                        [1.0, 2.0, 3.0, 4.0]]);                     
+        let result = result_mat_1 * result_mat_2;
+        let expected = Matrix::set([[14.0,  28.0,  42.0,  56.0],
+                                    [21.0,  42.0,  63.0,  84.0],
+                                    [21.0,  42.0,  63.0,  84.0],
+                                    [11.0,  22.0,  33.0,  44.0]]);
+        assert!(result.approximate(expected));
+        //=====================================================================//
+        let result_mat_1 = Matrix::set([[20.0,  5.5,  6.75, 34.0],
+                                        [2.4,   5.2,  1.1,  55.0],
+                                        [63.10, 1.1,  5.1,  17.3],
+                                        [15.2,  14.5, 8.0,  8.0]]);
+
+        let result_mat_2 = Matrix::set([[8.0,  8.0,  14.5, 15.2],
+                                        [17.3, 5.1,  1.1,  63.10],
+                                        [55.0, 1.1,  5.2,  2.4],
+                                        [34.0, 6.75, 5.5,  20.0]]);                     
+        let result = result_mat_1 * result_mat_2;
+        let expected = Matrix::set([[1782.4,   424.975,  518.15,   1347.25],
+                                    [2039.66,  418.18,   348.74,   1467.24],
+                                    [1392.53,  632.795,  1037.83,  1386.77],
+                                    [1084.45,  258.35,   321.95,   1325.19]]);
+        assert!(result.approximate(expected));
+        //=====================================================================//
+        let result_mat = Matrix::set([[10.0,  11.0,   12.0,  13.0],
+                                      [5.0,   6.0,    7.0,    8.0],
+                                      [63.0,  64.0,   65.0,  66.0],
+                                      [101.0, 102.0,  55.0,  10.0]]);        
+        let result = result_mat * 5.0;
+        let expected = Matrix::set([[50.0,  55.0,   60.0,  65.0],
+                                    [25.0,  30.0,   35.0,  40.0],
+                                    [315.0, 320.0,  325.0, 330.0],
+                                    [505.0, 510.0,  275.0, 50.0]]);
+        assert!(result.approximate(expected));
+    }
+
+    #[test]
+    fn matrix_div()
+    {
+        //=====================================================================//
+        let result_mat = Matrix::identity();
+        let result = 5.0 / result_mat;
+        let expected = Matrix::set([[0.2,  0.0,  0.0,  0.0],
+                                    [0.0,  0.2,  0.0,  0.0],
+                                    [0.0,  0.0,  0.2,  0.0],
+                                    [0.0,  0.0,  0.0,  0.2]]);
+        assert!(result.approximate(expected));
+        //=====================================================================//
+        let result_mat = Matrix::identity();
+        let result = result_mat / 5.0;
+        let expected = Matrix::set([[0.2,  0.0,  0.0,  0.0],
+                                    [0.0,  0.2,  0.0,  0.0],
+                                    [0.0,  0.0,  0.2,  0.0],
+                                    [0.0,  0.0,  0.0,  0.2]]);
+        assert!(result.approximate(expected));
+        //=====================================================================//
+        let result_mat = Matrix::set([[5.0,  3.0,  1.0,  7.0],
+                                      [9.0,  8.0,  7.0,  3.0],
+                                      [2.0,  1.0,  5.0,  6.0],
+                                      [7.0,  8.0,  6.0,  1.0]]);
+        let result = result_mat / 7.0;
+        let expected = Matrix::set([[5.0/7.0, 3.0/7.0,  1.0/7.0, 1.0],
+                                    [9.0/7.0, 8.0/7.0,  1.0,     3.0/7.0],
+                                    [2.0/7.0, 1.0/7.0,  5.0/7.0, 6.0/7.0],
+                                    [1.0,     8.0/7.0,  6.0/7.0, 1.0/7.0]]);
+        assert!(result.approximate(expected));
+        //=====================================================================//
+        let result_mat = Matrix::set([[5.0,  3.0,  1.0,  7.0],
+                                      [9.0,  8.0,  7.0,  3.0],
+                                      [2.0,  1.0,  5.0,  6.0],
+                                      [7.0,  8.0,  6.0,  1.0]]);
+        let result = 7.0 / result_mat;
+        let expected = Matrix::set([[5.0/7.0, 3.0/7.0,  1.0/7.0, 1.0],
+                                    [9.0/7.0, 8.0/7.0,  1.0,     3.0/7.0],
+                                    [2.0/7.0, 1.0/7.0,  5.0/7.0, 6.0/7.0],
+                                    [1.0,     8.0/7.0,  6.0/7.0, 1.0/7.0]]);
+        assert!(result.approximate(expected));
+        //=====================================================================//
+        let result_mat = Matrix::set([[12.5, 13.4,  25.9,  26.4],
+                                      [9.5,  78.0,  99.9,  101.1],
+                                      [5.5,  65.5,  15.2,  74.9],
+                                      [55.1, 55.2,  55.3,  55.4]]);
+        let result = result_mat / 2.5;
+        let expected = Matrix::set([[5.0,   5.36,  10.36, 10.56],
+                                    [3.8,   31.2,  39.96, 40.44],
+                                    [2.2,   26.2,  6.08,  29.96],
+                                    [22.04, 22.08, 22.12, 22.16]]);
+        println!("{:?}", result);
+        println!("{:?}", expected);
+        assert!(result.approximate(expected));
+        //=====================================================================//
+    }
+}
