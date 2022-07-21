@@ -56,6 +56,6 @@ impl Normalable for Emmision
     #[allow(unused_variables)]
     fn normals(&self, hit_record: HitRecord) -> Option<Color>
     {
-        return Some(hit_record.normal.to_color());
+        return Some(hit_record.get_normal().to_color());
     }
 }

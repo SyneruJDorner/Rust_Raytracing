@@ -37,16 +37,16 @@ impl Scatterable for Lambertian
 {
     fn scatter(&self, hit_record: HitRecord) -> Option<(Ray, Color)>
     {
-        let mut scatter_direction = hit_record.normal + Vector3::random_in_unit_sphere();
+        let mut scatter_direction = hit_record.get_normal() + Vector3::random_in_unit_sphere();
         
         if scatter_direction.near_zero()
         {
-            scatter_direction = hit_record.normal;
+            scatter_direction = hit_record.get_normal();
         }
         
-        let target = hit_record.hit_point + scatter_direction;
-        let direction = target - hit_record.hit_point;
-        let scattered_ray = Ray::new(hit_record.hit_point, direction, hit_record.uuid);
+        let target = hit_record.get_hit_point() + scatter_direction;
+        let direction = target - hit_record.get_hit_point();
+        let scattered_ray = Ray::new(hit_record.get_hit_point(), direction, hit_record.uuid);
         let attenuation = self.albedo;
         return Some((scattered_ray, attenuation));
     }
@@ -66,6 +66,6 @@ impl Normalable for Lambertian
     #[allow(unused_variables)]
     fn normals(&self, hit_record: HitRecord) -> Option<Color>
     {
-        return Some(hit_record.normal.to_color());
+        return Some(hit_record.get_normal().to_color());
     }
 }

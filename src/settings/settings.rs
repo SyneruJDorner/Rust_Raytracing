@@ -11,7 +11,8 @@ pub struct Settings
     pub IMAGE_HEIGHT: u32,
     pub SAMPLES_PER_PIXEL: u32,
     pub MAX_DEPTH: u32,
-    pub DEBUG_NORMALS: bool
+    pub DEBUG_NORMALS: bool,
+    pub DEBUG_AABB: bool
 }
 
 impl Settings
@@ -32,6 +33,7 @@ impl Settings
                 let max_depth = config.get("SCREEN", "MAX_DEPTH").unwrap().parse::<u32>().unwrap();
                 let aspect_ratio = (image_width as f64 / image_height as f64) as f64;
                 let debug_normals = config.get("DEBUG", "DEBUG_NORMALS").unwrap().parse::<bool>().unwrap();
+                let debug_aabb = config.get("DEBUG", "DEBUG_AABB").unwrap().parse::<bool>().unwrap();
 
                 let settings = Settings {
                     ASPECT_RATIO: aspect_ratio,
@@ -40,7 +42,8 @@ impl Settings
                     IMAGE_HEIGHT: image_height,
                     SAMPLES_PER_PIXEL: samples_per_pixel,
                     MAX_DEPTH: max_depth,
-                    DEBUG_NORMALS: debug_normals
+                    DEBUG_NORMALS: debug_normals,
+                    DEBUG_AABB: debug_aabb
                 };
                 settings.make_current();
             }
@@ -52,46 +55,61 @@ impl Settings
         }
     }
 
+    #[allow(dead_code)]
     pub fn current() -> Arc<Settings>
     {
         return CURRENT_SETTING.with(|c| c.read().unwrap().clone())
     }
 
+    #[allow(dead_code)]
     pub fn get_fov() -> f64
     {
         return Settings::current().FOV as f64
     }
 
+    #[allow(dead_code)]
     pub fn get_image_width() -> u32
     {
         return Settings::current().IMAGE_WIDTH
     }
 
+    #[allow(dead_code)]
     pub fn get_image_height() -> u32
     {
         return Settings::current().IMAGE_HEIGHT
     }
 
+    #[allow(dead_code)]
     pub fn get_samples_per_pixel() -> u32
     {
         return Settings::current().SAMPLES_PER_PIXEL
     }
 
+    #[allow(dead_code)]
     pub fn get_max_depth() -> u32
     {
         return Settings::current().MAX_DEPTH
     }
 
+    #[allow(dead_code)]
     pub fn get_aspect_ratio() -> f64
     {
         return Settings::current().ASPECT_RATIO
     }
 
+    #[allow(dead_code)]
     pub fn get_debug_normals() -> bool
     {
         return Settings::current().DEBUG_NORMALS
     }
 
+    #[allow(dead_code)]
+    pub fn get_debug_aabb() -> bool
+    {
+        return Settings::current().DEBUG_AABB
+    }
+
+    #[allow(dead_code)]
     fn make_current(self)
     {
         CURRENT_SETTING.with(|c| *c.write().unwrap() = Arc::new(self))

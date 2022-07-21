@@ -1,6 +1,8 @@
 use crate::Settings;
-use crate::Vector2;
+use crate::Matrix;
+use crate::{Vector2, Point};
 use crate::Color;
+//use crate::PostProcessing;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Draw
@@ -107,15 +109,45 @@ impl Draw
 		self.line(Vector2::new(0.125 * image_width, 0.167 * image_height),  Vector2::new(0.125 * image_width, 0.834 * image_height),    Color::new(0.0, 1.0, 0.0));
 		self.line(Vector2::new(0.875 * image_width, 0.167 * image_height),  Vector2::new(0.875 * image_width, 0.834 * image_height),    Color::new(0.0, 1.0, 0.0));
 		self.line(Vector2::new(0.125 * image_width, 0.834 * image_height),  Vector2::new(0.875 * image_width, 0.834 * image_height),    Color::new(0.0, 1.0, 0.0));
-
-        // draw.line(Vector2::new(0.0, 0.0),       Vector2::new(100.0, 100.0),     Color::new(0.0, 1.0, 0.0));
-        // draw.line(Vector2::new(0.0, 600.0),     Vector2::new(100.0, 500.0),     Color::new(0.0, 1.0, 0.0));
-        // draw.line(Vector2::new(800.0, 0.0),     Vector2::new(700.0, 100.0),     Color::new(0.0, 1.0, 0.0));
-        // draw.line(Vector2::new(800.0, 600.0),   Vector2::new(700.0, 500.0),     Color::new(0.0, 1.0, 0.0));
-        
-        // draw.line(Vector2::new(100.0, 100.0),   Vector2::new(700.0, 100.0),     Color::new(0.0, 1.0, 0.0));
-        // draw.line(Vector2::new(100.0, 100.0),   Vector2::new(100.0, 500.0),     Color::new(0.0, 1.0, 0.0));
-        // draw.line(Vector2::new(700.0, 100.0),   Vector2::new(700.0, 500.0),     Color::new(0.0, 1.0, 0.0));
-        // draw.line(Vector2::new(100.0, 500.0),   Vector2::new(700.0, 500.0),     Color::new(0.0, 1.0, 0.0));
 	}
+
+	#[allow(dead_code)]
+	pub fn draw_crosshair(&mut self)
+	{
+		let image_width = Settings::get_image_width() as f64;
+		let image_height = Settings::get_image_height() as f64;
+		let center = Vector2::new(image_width / 2.0, image_height / 2.0);
+		let aspect_ratio = Settings::get_aspect_ratio();
+
+		//Draw crosshair include aspact ratio
+		self.line(Vector2::new(center.x() - (0.03 * aspect_ratio * image_width), center.y()), Vector2::new(center.x() - 0.015 * aspect_ratio * image_width, center.y()), Color::new(0.0, 1.0, 0.0));
+		self.line(Vector2::new(center.x() + (0.03 * aspect_ratio * image_width), center.y()), Vector2::new(center.x() + (0.015 * aspect_ratio * image_width), center.y()), Color::new(0.0, 1.0, 0.0));
+		self.line(Vector2::new(center.x(), center.y() - (0.03 * aspect_ratio * image_height)), Vector2::new(center.x(), center.y() - 0.015 * aspect_ratio * image_height), Color::new(0.0, 1.0, 0.0));
+		self.line(Vector2::new(center.x(), center.y() + (0.03 * aspect_ratio * image_height)), Vector2::new(center.x(), center.y() + 0.015 * aspect_ratio * image_height), Color::new(0.0, 1.0, 0.0));
+	}
+
+	#[allow(dead_code)]
+	pub fn position_to_pixel(&self, point: Point, projection_matrix: Matrix) -> Vector2
+	{
+		let mut point_vec = Point::new(point.x(), point.y(), point.z());
+		point_vec = projection_matrix * point_vec;
+		let point_vec = point_vec / point_vec.w();
+		return Vector2::new(point_vec.x(), point_vec.y())
+	}
+
+	// #[allow(dead_code)]
+	// pub fn draw_aabb(&mut self)
+	// {
+	// 	let aabb_work = PostQueue::get_aabb_work();
+	// 	println!("{}", aabb_work.len());
+	// 	for aabb in aabb_work
+	// 	{
+	// 		let vertices = aabb.aabb_points;
+	// 		for vertex in vertices
+	// 		{
+	// 			let pixel = self.position_to_pixel(vertex, aabb.projection_matrix);
+	// 			self.pixel(pixel.x() as u32, pixel.y() as u32, Color::new(1.0, 1.0, 1.0), 1);
+	// 		}
+	// 	}
+	// }
 }

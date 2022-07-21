@@ -1,10 +1,6 @@
-use crate::Vector3;
-use crate::Ray;
-use crate::Hittable;
-use crate::HitRecord;
-use crate::Material;
-use crate::Lambertian;
-use crate::Transform;
+use crate::{Vector3, Ray, Transform};
+use crate::{Hittable, HitRecord, HitInfo, HitObject};
+use crate::{Material, Lambertian};
 use uuid::Uuid;
 
 #[derive(Copy, Debug, Clone)]
@@ -34,7 +30,10 @@ impl Cube
         let hit_point = world_ray.at(intersection_distance);
         let direction = world_ray.direction.normalize();
         let normal = self.normal_at().normalize();
-        return HitRecord::new(self.uuid, intersection_distance, hit_point, direction, normal, self.material);
+
+        let hit_info = HitInfo::new(intersection_distance, hit_point, direction, normal);
+        let hit_object = HitObject::new(self.material, self.transform);
+        return HitRecord::new(self.uuid, hit_info, hit_object)//, intersection_distance, hit_point, direction, normal, self.material);
     }
 
     pub fn normal_at(&self) -> Vector3

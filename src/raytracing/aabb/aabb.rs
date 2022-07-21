@@ -1,4 +1,4 @@
-use crate::Vector3;
+use crate::{Vector3, Point};
 use crate::Ray;
 use crate::Transform;
 use crate::INFINITY;
@@ -9,7 +9,8 @@ use libm::{fmin, fmax};
 pub struct AABB
 {
     pub min: Vector3,
-    pub max: Vector3
+    pub max: Vector3,
+    pub aabb_vertices: [Point; 8]
 }
 
 impl AABB
@@ -20,7 +21,17 @@ impl AABB
         return AABB
         {
             min: Vector3::new(-0.5, -0.5, -0.5),
-            max: Vector3::new(0.5, 0.5, 0.5)
+            max: Vector3::new(0.5, 0.5, 0.5),
+            aabb_vertices: [
+                Point::new(-0.5, -0.5, -0.5),
+                Point::new(0.5, -0.5, -0.5),
+                Point::new(0.5, 0.5, -0.5),
+                Point::new(-0.5, 0.5, -0.5),
+                Point::new(-0.5, -0.5, 0.5),
+                Point::new(0.5, -0.5, 0.5),
+                Point::new(0.5, 0.5, 0.5),
+                Point::new(-0.5, 0.5, 0.5)
+            ]
         }
     }
 
@@ -30,7 +41,17 @@ impl AABB
         return AABB
         {
             min: Vector3::new(min.x(), min.y(), min.z()),
-            max: Vector3::new(max.x(), max.y(), max.z())
+            max: Vector3::new(max.x(), max.y(), max.z()),
+            aabb_vertices: [
+                Point::new(min.x(), min.y(), min.z()),
+                Point::new(max.x(), min.y(), min.z()),
+                Point::new(max.x(), max.y(), min.z()),
+                Point::new(min.x(), max.y(), min.z()),
+                Point::new(min.x(), min.y(), max.z()),
+                Point::new(max.x(), min.y(), max.z()),
+                Point::new(max.x(), max.y(), max.z()),
+                Point::new(min.x(), max.y(), max.z())
+            ]
         }
     }
 
@@ -49,6 +70,13 @@ impl AABB
     }
 
     #[allow(dead_code)]
+    #[inline(always)]
+    pub fn get_vertices(&self) -> [Point; 8]
+    {
+        return self.aabb_vertices;
+    }
+
+    #[allow(dead_code)]
     pub fn calcaulte_aabb_bounds(transform: &Transform) -> AABB
     {
         let min_x = transform.position.x() - transform.scale.x();
@@ -57,6 +85,7 @@ impl AABB
         let max_y = transform.position.y() + transform.scale.y();
         let min_z = transform.position.z() - transform.scale.z();
         let max_z = transform.position.z() + transform.scale.z();
+
         let output_box = AABB::set(Vector3::new(min_x, min_y, min_z), Vector3::new(max_x, max_y, max_z));
         return output_box;
     }
@@ -88,6 +117,7 @@ impl AABB
         tmin = fmax(tz1, tmin);
         tmax = fmin(tz2, tmax);
 
-        return tmax > fmax(tmin, 0.0);
+        let result = tmax > fmax(tmin, 0.0);
+        return result;
     }
 }

@@ -30,8 +30,8 @@ impl Scatterable for Glass
     fn scatter(&self, hit_record: HitRecord) -> Option<(Ray, Color)>
     {
         let attenuation = Color::new(1.0, 1.0, 1.0);
-        let direction = hit_record.direction;
-        let mut normal = hit_record.normal;
+        let direction = hit_record.get_direction();
+        let mut normal = hit_record.get_normal();
         let mut refraction_ratio = self.refract_index;
         let inside = Vector3::dot(direction, normal) < 0.0;
 
@@ -41,7 +41,7 @@ impl Scatterable for Glass
             normal = -normal;
         }
         
-        let ray_origin: Point = hit_record.hit_point + 0.0001 * normal;
+        let ray_origin: Point = hit_record.get_hit_point() + 0.0001 * normal;
         let cos_theta = fmin(Vector3::dot(direction, normal) as f64, 1.0) as f64;
         let sin_theta = (1.0 - cos_theta * cos_theta).sqrt();
         let cannot_refract = refraction_ratio * sin_theta < 0.0;
@@ -82,6 +82,6 @@ impl Normalable for Glass
     #[allow(unused_variables)]
     fn normals(&self, hit_record: HitRecord) -> Option<Color>
     {
-        return Some(hit_record.normal.to_color());
+        return Some(hit_record.get_normal().to_color());
     }
 }

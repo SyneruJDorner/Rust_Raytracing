@@ -46,12 +46,12 @@ impl Hittable for HittableList
                 if intersections.is_some()
                 {
                     let hit_objects = intersections.unwrap();
-
-                    if world_ray.previous_uuid == hit_objects.uuid && hit_objects.distance < 0.1
+                    
+                    if world_ray.previous_uuid == hit_objects.uuid && hit_objects.get_distance() < 0.1
                     {
                         continue;
                     }
-
+                    
                     current_object.push(hit_objects);
                 }
             }
@@ -64,7 +64,7 @@ impl Hittable for HittableList
             {
                 for j in i..current_object.len()
                 {
-                    if current_object[i].distance > current_object[j].distance
+                    if current_object[i].get_distance() > current_object[j].get_distance()
                     {
                         let temp = current_object[i];
                         current_object[i] = current_object[j];
@@ -79,6 +79,9 @@ impl Hittable for HittableList
         return None;
     }
 
-    //In the future use this to determine wwhich object was hit and return it to the caller
-    fn hit_aabb(&self, _world_ray: Ray) -> bool{ return true; }
+    //In the future use this to determine which object was hit and return it to the caller
+    fn hit_aabb(&self, _world_ray: Ray) -> bool
+    {
+        return false;
+    }
 }

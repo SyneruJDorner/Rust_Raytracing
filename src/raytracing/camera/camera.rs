@@ -21,7 +21,7 @@ pub struct Camera
     pub height: u32,
     pub width: u32,
     pub pixel_size: f64,
-    pub transform: Transform,
+    pub transform: Transform, //Veiw Matrix located in the transform struct
     pub aspect_ratio: f64,
     pub fov: f64,
     pub half_width: f64,
@@ -123,7 +123,9 @@ impl Camera
 
         //Apply any line debugging here!
         draw.draw_frame();
-
+        draw.draw_crosshair();
+        //draw.draw_aabb();
+        
         //Write all the array to a file
         let mut file = File::create("image.ppm").unwrap();
         for pixel in draw.get_pixels()

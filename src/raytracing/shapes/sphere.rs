@@ -3,7 +3,7 @@ use crate::Vector3;
 use crate::Point;
 use crate::Ray;
 use crate::Hittable;
-use crate::HitRecord;
+use crate::{HitRecord, HitInfo, HitObject};
 use crate::Material;
 use crate::Lambertian;
 use crate::Transform;
@@ -38,7 +38,9 @@ impl Sphere
         let hit_point = world_ray.at(intersection_distance);
         let direction = world_ray.direction.normalize();
         let normal = self.normal_at(hit_point).normalize();
-        return HitRecord::new(self.uuid, intersection_distance, hit_point, direction, normal, self.material);
+        let hit_info = HitInfo::new(intersection_distance, hit_point, direction, normal);
+        let hit_object = HitObject::new(self.material, self.transform);
+        return HitRecord::new(self.uuid, hit_info, hit_object);
     }
 
     pub fn normal_at(&self, world_point: Point) -> Vector3

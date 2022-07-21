@@ -20,6 +20,11 @@ https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-generating-
 //Working with Sheering, Scaling, Rotation and Position
 https://www.youtube.com/watch?v=uRJCi0dlU4U
 https://github.com/iweinbau/Ray-Tracing
+
+
+//FUTURE RESEARCH
+//Look up rendering into a window
+//https://docs.rs/winit/0.10.1
 */
 
 //Settings
@@ -58,6 +63,7 @@ pub use utils::*;
 #[path = "raytracing/shapes/cube.rs"] mod cube;
 #[path = "raytracing/aabb/aabb.rs"] mod aabb;
 #[path = "raytracing/draw/draw.rs"] mod draw;
+#[path = "raytracing/debug_queue/debug_queue.rs"] mod debug_queue;
 pub use ray::Ray as Ray;
 pub use camera::Camera as Camera;
 pub use material::Material as Material;
@@ -70,12 +76,16 @@ pub use material::submaterials::glass::Glass as Glass;
 pub use material::submaterials::emmision::Emmision as Emmision;
 pub use hittable::Hittable as Hittable;
 pub use hittable::HitRecord as HitRecord;
+pub use hittable::HitInfo as HitInfo;
+pub use hittable::HitObject as HitObject;
 pub use hittablelist::HittableList as HittableList;
 pub use sphere::Sphere as Sphere;
 pub use plane::Plane as Plane;
 pub use triangle::Triangle as Triangle;
 pub use cube::Cube as Cube;
 pub use aabb::AABB as AABB;
+
+pub use debug_queue::DebugQueue as DebugQueue;
 pub use draw::*;
 
 #[path = "cmd_operations/cmd_operations.rs"] mod cmd;

@@ -45,10 +45,10 @@ impl Scatterable for Metal
 {
     fn scatter(&self, hit_record: HitRecord) -> Option<(Ray, Color)>
     {
-        let reflected = Vector3::reflect(hit_record.direction, hit_record.normal);
-        let scattered_ray = Ray::new(hit_record.hit_point, reflected + self.fuzz * Vector3::random_in_unit_sphere(), hit_record.uuid);
+        let reflected = Vector3::reflect(hit_record.get_direction(), hit_record.get_normal());
+        let scattered_ray = Ray::new(hit_record.get_hit_point(), reflected + self.fuzz * Vector3::random_in_unit_sphere(), hit_record.uuid);
         let attenuation = self.albedo;
-        if Vector3::dot(scattered_ray.direction, hit_record.normal) > 0.0
+        if Vector3::dot(scattered_ray.direction, hit_record.get_normal()) > 0.0
         {
             return Some((scattered_ray, attenuation));
         }
@@ -73,6 +73,6 @@ impl Normalable for Metal
     #[allow(unused_variables)]
     fn normals(&self, hit_record: HitRecord) -> Option<Color>
     {
-        return Some(hit_record.normal.to_color());
+        return Some(hit_record.get_normal().to_color());
     }
 }

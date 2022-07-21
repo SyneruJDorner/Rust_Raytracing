@@ -1,11 +1,10 @@
 use crate::Settings;
 use crate::Matrix;
-use crate::Point;
-use crate::Vector3;
+use crate::{Point, Vector3};
 use crate::Color;
-use crate::Hittable;
-use crate::HittableList;
+use crate::{Hittable, HittableList};
 use crate::{Scatterable, Emmitable, Normalable};
+use crate::{DebugQueue};
 use uuid::Uuid;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -59,18 +58,25 @@ impl Ray
         if hit.is_some()
         {
             let closest_hit = hit.unwrap();
-            let scatter = closest_hit.material.scatter(closest_hit);
-            let emitted = closest_hit.material.emitted(closest_hit);
+            let scatter = closest_hit.get_material().scatter(closest_hit);
+            let emitted = closest_hit.get_material().emitted(closest_hit);
             let emmittion = emitted.unwrap();
 
             if Settings::get_debug_normals() == true
             {
-                let normals = closest_hit.material.normals(closest_hit);
+                let normals = closest_hit.get_material().normals(closest_hit);
                 if normals.is_some()
                 {
                     let normal_color = normals.unwrap();
                     return normal_color.rgb();
                 }
+            }
+
+            if Settings::get_debug_aabb() == true
+            {
+                let uuid = closest_hit.uuid;
+                let vertices = closest_hit.get_hit_transform().aabb_bounds.get_vertices();
+                DebugQueue::add_to_debug_queue(uuid, vertices, closest_hit.get_hit_transform().transform);
             }
 
             if scatter.is_some()
