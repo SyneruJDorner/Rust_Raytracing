@@ -57,7 +57,7 @@ pub use utils::*;
 #[path = "raytracing/shapes/triangle.rs"] mod triangle;
 #[path = "raytracing/shapes/cube.rs"] mod cube;
 #[path = "raytracing/aabb/aabb.rs"] mod aabb;
-#[path = "raytracing/line/line.rs"] mod line;
+#[path = "raytracing/draw/draw.rs"] mod draw;
 pub use ray::Ray as Ray;
 pub use camera::Camera as Camera;
 pub use material::Material as Material;
@@ -76,7 +76,7 @@ pub use plane::Plane as Plane;
 pub use triangle::Triangle as Triangle;
 pub use cube::Cube as Cube;
 pub use aabb::AABB as AABB;
-pub use line::*;
+pub use draw::*;
 
 #[path = "cmd_operations/cmd_operations.rs"] mod cmd;
 pub use cmd::*;

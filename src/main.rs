@@ -122,5 +122,5 @@ fn main()
     camera.trace(world);
 
     let elapsed = now.elapsed();
-    println!("Rendder time: {:.2?}", elapsed);
+    println!("Render time: {:.2?}", elapsed);
 }
