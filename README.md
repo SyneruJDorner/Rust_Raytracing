@@ -17,6 +17,7 @@ This project is to test my knowledge in rust, by building on top of my knowledge
 - Settings (though settings.ini file).
 - Debugging normals.
 - Command line feedback, like rendering progress.
+- Different rendering methods: Default (Raytracing) Checkerboard (Raytraced optimized, less accurate), Normal.
 <br/>
 
 **Need to Implement:**<br/>
@@ -57,6 +58,10 @@ This project is to test my knowledge in rust, by building on top of my knowledge
 <br/>
 <br/>
 
+**Raytraced Examples:**<br/>
 ![Prefab](https://github.com/justindd1994/Rust_Raytracing/blob/master/images/ray-tracing-demo-5.png)<br/>
 ![Prefab](https://github.com/justindd1994/Rust_Raytracing/blob/master/images/ray-tracing-demo-6.png)<br/>
 ![Prefab](https://github.com/justindd1994/Rust_Raytracing/blob/master/images/ray-tracing-demo-7.png)<br/>
+
+**Checkerboard Raytraced Examples:**<br/>
+![Prefab](https://github.com/justindd1994/Rust_Raytracing/blob/master/images/ray-tracing-demo-8.png)<br/>
