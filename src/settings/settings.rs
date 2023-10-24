@@ -5,6 +5,7 @@ use configparser::ini::Ini;
 #[allow(non_snake_case)]
 pub struct Settings
 {
+    pub RENDERING_METHOD: String,
     pub ASPECT_RATIO: f64,
     pub FOV: u32,
     pub IMAGE_WIDTH: u32,
@@ -26,6 +27,7 @@ impl Settings
         {
             Ok(_map) =>
             {
+                let rendering_method = config.get("RENDERING", "METHOD").unwrap();
                 let fov = config.get("SCREEN", "FOV").unwrap().parse::<u32>().unwrap();
                 let image_width = config.get("SCREEN", "IMAGE_WIDTH").unwrap().parse::<u32>().unwrap();
                 let image_height = config.get("SCREEN", "IMAGE_HEIGHT").unwrap().parse::<u32>().unwrap();
@@ -36,6 +38,7 @@ impl Settings
                 let debug_aabb = config.get("DEBUG", "DEBUG_AABB").unwrap().parse::<bool>().unwrap();
 
                 let settings = Settings {
+                    RENDERING_METHOD: rendering_method,
                     ASPECT_RATIO: aspect_ratio,
                     FOV: fov,
                     IMAGE_WIDTH: image_width,
@@ -59,6 +62,12 @@ impl Settings
     pub fn current() -> Arc<Settings>
     {
         return CURRENT_SETTING.with(|c| c.read().unwrap().clone())
+    }
+
+    #[allow(dead_code)]
+    pub fn get_rendering_method() -> String
+    {
+        return Settings::current().RENDERING_METHOD.clone();
     }
 
     #[allow(dead_code)]

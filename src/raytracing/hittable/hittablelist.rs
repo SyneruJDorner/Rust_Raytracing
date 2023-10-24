@@ -32,7 +32,7 @@ impl HittableList
 
 impl Hittable for HittableList
 {
-    fn hit(&self, world_ray: Ray) -> Option<HitRecord>
+    fn hit(&self, world_ray: &Ray) -> Option<HitRecord>
     {
         let mut current_object: Vec<HitRecord> = Vec::new();
 
@@ -40,7 +40,7 @@ impl Hittable for HittableList
         for object in &self.objects
         {
             //If the ray intersected the AABB bounds of the object
-            if object.hit_aabb(world_ray) == true
+            if object.hit_aabb(&world_ray) == true
             {
                 let intersections = object.hit(world_ray);
                 if intersections.is_some()
@@ -80,7 +80,7 @@ impl Hittable for HittableList
     }
 
     //In the future use this to determine which object was hit and return it to the caller
-    fn hit_aabb(&self, _world_ray: Ray) -> bool
+    fn hit_aabb(&self, _world_ray: &Ray) -> bool
     {
         return false;
     }

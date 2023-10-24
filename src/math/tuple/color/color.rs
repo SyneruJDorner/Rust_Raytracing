@@ -1,11 +1,12 @@
 use crate::Tuple;
-use crate::clamp;
 
 mod operators
 {
+    pub mod default;
     pub mod mul;
     pub mod add;
     pub mod sub;
+    pub mod div;
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -170,7 +171,7 @@ impl Color
     }
 
     #[allow(dead_code)]
-    pub fn write_color(rgb: Color, samples_per_pixel: u32) -> String
+    pub fn store_color(rgb: Color, samples_per_pixel: u32) -> [f64; 3]
     {
         let mut r = rgb.r();
         let mut g = rgb.g();
@@ -181,10 +182,33 @@ impl Color
         g = (scale * g).sqrt();
         b = (scale * b).sqrt();
 
-        let ir = (255.99 * clamp(r, 0.0, 0.999)) as i32;
-        let ig = (255.99 * clamp(g, 0.0, 0.999)) as i32;
-        let ib = (255.99 * clamp(b, 0.0, 0.999)) as i32;
+        // let ir = (255.0 * clamp(r, 0.0, 1.0)) as i32;
+        // let ig = (255.0 * clamp(g, 0.0, 1.0)) as i32;
+        // let ib = (255.0 * clamp(b, 0.0, 1.0)) as i32;
 
-        return format!("{} {} {}", ir, ig, ib);
+        return [r, g, b]//format!("{} {} {}", r, g, b);
+    }
+
+    // pub fn from_string(s: &str) -> Color
+	// {
+    //     let values: Vec<&str> = s.split_whitespace().collect();
+    //     let r = values[0].parse::<f64>();//.ok()? as f64 / 255.0;
+    //     let g = values[1].parse::<f64>();//.ok()? as f64 / 255.0;
+    //     let b = values[2].parse::<f64>();//.ok()? as f64 / 255.0;
+    //     return Color::new(r, g, b)
+    // }
+
+    pub fn clamp(&self) -> Color {
+        let clamp_val = |x: f64|
+        {
+            if x < 0.0 {
+                0.0
+            } else if x > 1.0 {
+                1.0
+            } else {
+                x
+            }
+        };
+        Color::new(clamp_val(self.r()), clamp_val(self.g()), clamp_val(self.b()))
     }
 }

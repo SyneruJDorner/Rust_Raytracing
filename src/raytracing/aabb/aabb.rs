@@ -92,7 +92,7 @@ impl AABB
 
     #[allow(dead_code)]
     #[inline(always)]
-    pub fn hit(&self, world_ray: Ray) -> bool
+    pub fn hit(&self, world_ray: &Ray) -> bool
     {
         let min = self.min;
         let max = self.max;

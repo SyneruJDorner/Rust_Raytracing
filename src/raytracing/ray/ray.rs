@@ -7,7 +7,7 @@ use crate::{Scatterable, Emmitable, Normalable};
 use crate::{DebugQueue};
 use uuid::Uuid;
 
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct Ray
 {
     pub origin: Point,
@@ -25,77 +25,61 @@ impl Ray
             origin,
             direction,
             color: Color::new(0.0, 0.0, 0.0),
-            previous_uuid: previous_uuid
+            previous_uuid: previous_uuid,
         }
     }
 
     pub fn at(&self, distance: f64) -> Point
     {
-        return self.origin + distance * self.direction;
+        return self.origin + distance * self.direction
     }
 
-    pub fn transform(&self, m: Matrix) -> Ray
+    pub fn transform(&self, m: &Matrix) -> Ray
     {
         Ray
         {
             origin: m * self.origin,
             direction: m * self.direction,
             color: self.color,
-            previous_uuid: self.previous_uuid
+            previous_uuid: self.previous_uuid,
         }
     }
 
     #[allow(dead_code)]
-    pub fn calcaulte_ray(ray: Ray, world: &HittableList, depth: u32)  -> Color
+    pub fn calculate_ray(ray: &Ray, world: &HittableList, depth: u32) -> Color
     {
-        if depth == 0
-        {
-            return Color::new(0.0, 0.0, 0.0);
+        if depth == 0 {
+            return Color::new(0.0, 0.0, 0.0).clamp();
         }
-
-        let hit = world.hit(ray);
-        
-        if hit.is_some()
-        {
-            let closest_hit = hit.unwrap();
-            let scatter = closest_hit.get_material().scatter(closest_hit);
-            let emitted = closest_hit.get_material().emitted(closest_hit);
-            let emmittion = emitted.unwrap();
-
-            if Settings::get_debug_normals() == true
-            {
-                let normals = closest_hit.get_material().normals(closest_hit);
-                if normals.is_some()
-                {
-                    let normal_color = normals.unwrap();
-                    return normal_color.rgb();
+    
+        if let Some(closest_hit) = world.hit(ray) {
+            let material = closest_hit.get_material();
+    
+            if Settings::get_debug_normals() {
+                if let Some(normal_color) = material.normals(closest_hit) {
+                    return normal_color.rgb().clamp();
                 }
             }
-
-            if Settings::get_debug_aabb() == true
-            {
+    
+            if Settings::get_debug_aabb() {
                 let uuid = closest_hit.uuid;
                 let vertices = closest_hit.get_hit_transform().aabb_bounds.get_vertices();
                 DebugQueue::add_to_debug_queue(uuid, vertices, closest_hit.get_hit_transform().transform);
             }
-
-            if scatter.is_some()
-            {
-                let scattered_ray = scatter.unwrap().0;
-                let attenuation = scatter.unwrap().1;
-                let scattered = Ray::calcaulte_ray(scattered_ray, world, depth - 1);
-                
-                return emmittion + attenuation * scattered;
+    
+            let emmittion = material.emitted(closest_hit).unwrap_or_default();
+    
+            if let Some((scattered_ray, attenuation)) = material.scatter(closest_hit) {
+                let scattered = Ray::calculate_ray(&scattered_ray, world, depth - 1);
+                return (emmittion + attenuation * scattered).clamp();
             }
-
-            return emmittion;
+    
+            return emmittion.clamp();
         }
-
+    
         let unit_direction = Vector3::normalize(&ray.direction);
         let t = 0.5 * (unit_direction.y() + 1.0);
-        let color_1 = Color::new(1.0, 1.0, 1.0);
-        let color_2 = Color::new(0.5, 0.7, 1.0);
-        let sky_color = (1.0 - t) * color_1 + t * color_2;
-        return sky_color;
+        let sky_color = ((1.0 - t) * Color::new(1.0, 1.0, 1.0) + t * Color::new(0.5, 0.7, 1.0)).clamp();
+        sky_color
     }
 }

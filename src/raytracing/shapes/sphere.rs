@@ -33,7 +33,7 @@ impl Sphere
         }
     }
 
-    pub fn calculate_hit(&self, intersection_distance: f64, world_ray: Ray) -> HitRecord
+    pub fn calculate_hit(&self, intersection_distance: f64, world_ray: &Ray) -> HitRecord
     {
         let hit_point = world_ray.at(intersection_distance);
         let direction = world_ray.direction.normalize();
@@ -55,7 +55,7 @@ impl Sphere
 
 impl Hittable for Sphere 
 {
-    fn hit(&self, world_ray: Ray) -> Option<HitRecord>
+    fn hit(&self, world_ray: &Ray) -> Option<HitRecord>
     {
         let inverse = self.transform.transform.inverse();
 
@@ -64,7 +64,7 @@ impl Hittable for Sphere
             return None;
         }
         
-        let local_ray = world_ray.transform(inverse.unwrap());
+        let local_ray = world_ray.transform(&inverse.unwrap());
 
         let sphere_to_ray = local_ray.origin - Point::new(0.0, 0.0, 0.0);
         let a = Vector3::dot(local_ray.direction, local_ray.direction);
@@ -95,7 +95,7 @@ impl Hittable for Sphere
         return Some(self.calculate_hit(closest_hit, world_ray));
     }
 
-    fn hit_aabb(&self, world_ray: Ray) -> bool
+    fn hit_aabb(&self, world_ray: &Ray) -> bool
     {
         return self.transform.aabb_bounds.hit(world_ray);
     }
