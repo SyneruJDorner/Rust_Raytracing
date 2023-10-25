@@ -65,3 +65,6 @@ This project is to test my knowledge in rust, by building on top of my knowledge
 
 **Checkerboard Raytraced Examples:**<br/>
 ![Prefab](https://github.com/justindd1994/Rust_Raytracing/blob/master/images/ray-tracing-demo-8.png)<br/>
+
+**AABB Examples:**<br/>
+![Prefab](https://github.com/justindd1994/Rust_Raytracing/blob/master/images/ray-tracing-demo-9.png)<br/>
