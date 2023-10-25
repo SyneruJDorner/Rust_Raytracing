@@ -210,7 +210,7 @@ impl Vector3
     #[allow(dead_code)]
     pub fn to_color(&self) -> Color
     {
-        return Color::new(self.x(), self.y(), self.z());//self.0.equal_approx(other.0);
+        return Color::new(self.x(), self.y(), self.z());
     }
 
     #[allow(dead_code)]

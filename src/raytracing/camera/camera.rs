@@ -1,4 +1,5 @@
 use crate::Settings;
+use crate::{Vector2, Vector3};
 use crate::Transform;
 use crate::HittableList;
 use crate::Draw;
@@ -79,14 +80,13 @@ impl Camera
     //Calculates the ray relative to the cameras position and rotation
     pub fn trace(&mut self, world: HittableList)
     {
-        //clear_cmd();
+        clear_cmd();
         let mut draw = Draw::new();
-        draw.render(self, world);
+        draw.render(self, &world);
 
         //Apply any line debugging here!
         //draw.draw_frame();
         //draw.draw_crosshair();
-        //draw.draw_aabb();
         
         //Write all the array to a file
         let mut file = File::create("image.ppm").unwrap();

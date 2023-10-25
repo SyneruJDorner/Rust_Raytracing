@@ -189,15 +189,6 @@ impl Color
         return [r, g, b]//format!("{} {} {}", r, g, b);
     }
 
-    // pub fn from_string(s: &str) -> Color
-	// {
-    //     let values: Vec<&str> = s.split_whitespace().collect();
-    //     let r = values[0].parse::<f64>();//.ok()? as f64 / 255.0;
-    //     let g = values[1].parse::<f64>();//.ok()? as f64 / 255.0;
-    //     let b = values[2].parse::<f64>();//.ok()? as f64 / 255.0;
-    //     return Color::new(r, g, b)
-    // }
-
     pub fn clamp(&self) -> Color {
         let clamp_val = |x: f64|
         {

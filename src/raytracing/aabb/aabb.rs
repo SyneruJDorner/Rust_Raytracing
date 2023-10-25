@@ -18,20 +18,24 @@ impl AABB
     #[allow(dead_code)]
     pub fn new() -> AABB
     {
+        let min = Vector3::new(-0.5, -0.5, -0.5);
+        let max = Vector3::new(0.5, 0.5, 0.5);
+        let aabb_vertices = [
+            Point::new(min.x(), min.y(), min.z()),
+            Point::new(max.x(), min.y(), min.z()),
+            Point::new(max.x(), max.y(), min.z()),
+            Point::new(min.x(), max.y(), min.z()),
+            Point::new(min.x(), min.y(), max.z()),
+            Point::new(max.x(), min.y(), max.z()),
+            Point::new(max.x(), max.y(), max.z()),
+            Point::new(min.x(), max.y(), max.z())
+        ];
+
         return AABB
         {
-            min: Vector3::new(-0.5, -0.5, -0.5),
-            max: Vector3::new(0.5, 0.5, 0.5),
-            aabb_vertices: [
-                Point::new(-0.5, -0.5, -0.5),
-                Point::new(0.5, -0.5, -0.5),
-                Point::new(0.5, 0.5, -0.5),
-                Point::new(-0.5, 0.5, -0.5),
-                Point::new(-0.5, -0.5, 0.5),
-                Point::new(0.5, -0.5, 0.5),
-                Point::new(0.5, 0.5, 0.5),
-                Point::new(-0.5, 0.5, 0.5)
-            ]
+            min: min,
+            max: max,
+            aabb_vertices: aabb_vertices
         }
     }
 
@@ -76,8 +80,7 @@ impl AABB
         return self.aabb_vertices;
     }
 
-    #[allow(dead_code)]
-    pub fn calcaulte_aabb_bounds(transform: &Transform) -> AABB
+    pub fn calcalute_aabb_bounds(transform: &Transform) -> AABB
     {
         let min_x = transform.position.x() - transform.scale.x();
         let max_x = transform.position.x() + transform.scale.x();

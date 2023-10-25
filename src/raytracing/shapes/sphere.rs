@@ -1,12 +1,10 @@
+use crate::{Vector3, Ray, AABB, Transform};
 use crate::Tuple;
-use crate::Vector3;
 use crate::Point;
-use crate::Ray;
 use crate::Hittable;
 use crate::{HitRecord, HitInfo, HitObject};
 use crate::Material;
 use crate::Lambertian;
-use crate::Transform;
 use uuid::Uuid;
 use libm::{fmin, fmax};
 
@@ -98,5 +96,15 @@ impl Hittable for Sphere
     fn hit_aabb(&self, world_ray: &Ray) -> bool
     {
         return self.transform.aabb_bounds.hit(world_ray);
+    }
+
+    fn get_aabb(&self) -> AABB
+    {
+        return self.transform.aabb_bounds;
+    }
+
+    fn get_transform(&self) -> Transform
+    {
+        return self.transform;
     }
 }

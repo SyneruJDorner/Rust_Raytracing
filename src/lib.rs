@@ -63,7 +63,6 @@ pub use utils::*;
 #[path = "raytracing/shapes/cube.rs"] mod cube;
 #[path = "raytracing/aabb/aabb.rs"] mod aabb;
 #[path = "raytracing/draw/draw.rs"] mod draw;
-#[path = "raytracing/debug_queue/debug_queue.rs"] mod debug_queue;
 pub use ray::Ray as Ray;
 pub use camera::Camera as Camera;
 pub use material::Material as Material;
@@ -85,7 +84,6 @@ pub use triangle::Triangle as Triangle;
 pub use cube::Cube as Cube;
 pub use aabb::AABB as AABB;
 
-pub use debug_queue::DebugQueue as DebugQueue;
 pub use draw::*;
 
 #[path = "cmd_operations/cmd_operations.rs"] mod cmd;

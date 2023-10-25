@@ -1,7 +1,7 @@
-use crate::{Vector3, Ray, Transform};
+use uuid::Uuid;
+use crate::{Vector3, Ray, AABB, Transform};
 use crate::{Hittable, HitRecord, HitInfo, HitObject};
 use crate::{Material, Lambertian};
-use uuid::Uuid;
 
 #[derive(Copy, Debug, Clone)]
 pub struct Cube
@@ -26,7 +26,7 @@ impl Cube
 
     pub fn calculate_hit(&self, intersection_distance: f64, world_ray: &Ray) -> HitRecord
     {
-        //Calcaulte the normal of the Cube at the intersection point
+        //Calcalute the normal of the Cube at the intersection point
         let hit_point = world_ray.at(intersection_distance);
         let direction = world_ray.direction.normalize();
         let normal = self.normal_at().normalize();
@@ -85,5 +85,15 @@ impl Hittable for Cube
     fn hit_aabb(&self, world_ray: &Ray) -> bool
     {
         return self.transform.aabb_bounds.hit(world_ray);
+    }
+
+    fn get_aabb(&self) -> AABB
+    {
+        return self.transform.aabb_bounds;
+    }
+
+    fn get_transform(&self) -> Transform
+    {
+        return self.transform;
     }
 }

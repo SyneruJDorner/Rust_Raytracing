@@ -1,3 +1,5 @@
+use crate::AABB;
+use crate::Transform;
 use crate::Ray;
 use crate::Hittable;
 use crate::HitRecord;
@@ -80,8 +82,27 @@ impl Hittable for HittableList
     }
 
     //In the future use this to determine which object was hit and return it to the caller
-    fn hit_aabb(&self, _world_ray: &Ray) -> bool
+    fn hit_aabb(&self, world_ray: &Ray) -> bool
     {
+        //loop over objects and check which one hit is the closest
+        for object in &self.objects
+        {
+            //If the ray intersected the AABB bounds of the object
+            if object.hit_aabb(&world_ray) == true
+            {
+                return true;
+            }
+        }
         return false;
+    }
+
+    fn get_aabb(&self) -> AABB
+    {
+        return AABB::new();
+    }
+
+    fn get_transform(&self) -> Transform
+    {
+        return Transform::new();
     }
 }

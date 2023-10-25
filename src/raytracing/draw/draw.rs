@@ -83,9 +83,17 @@ impl Draw
 	#[allow(dead_code)]
 	pub fn pixel(&mut self, x: u32, y: u32, pixel_color: Color, samples: u32)
 	{
-		let pixel_index = (y * Settings::get_image_width() + x) as usize;
-		//debug_assert!(pixel_index < self.pixels.len(), "Pixel index out of bounds!");
-		self.pixels[pixel_index] = Color::store_color(pixel_color, samples);
+		if x < Settings::get_image_width() && y < Settings::get_image_height()
+		{
+			let pixel_index = (y * Settings::get_image_width() + x) as usize;
+			
+			// Further check to ensure that pixel_index is within bounds (for extra safety)
+			if pixel_index < self.pixels.len()
+			{
+				self.pixels[pixel_index] = Color::store_color(pixel_color, samples);
+			}
+		}
+		
 	}
 
 	#[allow(dead_code)]
@@ -189,29 +197,6 @@ impl Draw
 		return Some(Color::new(rgb[0], rgb[1], rgb[2]))
 	}
 	
-
-
-
-
-
-
-
-
-	// pub fn prepare_ray(&mut self, camera: &mut Camera, x_in: u32, y_in: u32) -> Ray
-    // {
-    //     let u = 2.0 * (x_in as f64 + random_float(0.0, 1.0)) / (Settings::get_image_width() as f64);
-    //     let v = 2.0 * (y_in as f64 + random_float(0.0, 1.0)) / (Settings::get_image_height() as f64);
-
-    //     let angle: f64 = (deg2rad((camera.fov * 0.5).into()) as f64).tan() as f64;
-    //     let x = (u - 1.0) * camera.aspect_ratio * angle;
-    //     let y = (1.0 - v) * angle;
-
-    //     let inverse = camera.transform.transform.inverse().unwrap();
-    //     let direction = inverse * (Vector3::new(x, y, -1.0)).normalize();
-    //     let origin = camera.transform.position;
-    //     return Ray::new(origin, direction, Uuid::nil());
-    // }
-
 	pub fn prepare_ray(&mut self, camera: &mut Camera, x_in: f64, y_in: f64, inv_width: f64, inv_height: f64, angle: f64) -> Ray
 	{
 		let u = 2.0 * (x_in + random_float(0.0, 1.0)) * inv_width;
@@ -227,20 +212,20 @@ impl Draw
 	}
 
 	#[allow(dead_code)]
-	pub fn render(&mut self, camera: &mut Camera, world: HittableList)
+	pub fn render(&mut self, camera: &mut Camera, world: &HittableList)
 	{
 		if Settings::get_rendering_method().to_lowercase() == RenderingTechnique::Default.to_string().to_lowercase()
 		{
-			self.render_default(camera, world);
+			self.render_default(camera, &world);
 		}
 		else if Settings::get_rendering_method().to_lowercase() == RenderingTechnique::Checkerboard.to_string().to_lowercase()
 		{
-			self.render_checkerboard(camera, world);
+			self.render_checkerboard(camera, &world);
 		}
 	}
 
 	#[allow(dead_code)]
-	pub fn render_default(&mut self, camera: &mut Camera, world: HittableList)
+	pub fn render_default(&mut self, camera: &mut Camera, world: &HittableList)
 	{
 		let mut pb: ProgressBar<std::io::Stdout> = ProgressBar::new(100);
 		let image_width = Settings::get_image_width() as f64;
@@ -270,7 +255,7 @@ impl Draw
 	}
 
 	#[allow(dead_code)]
-	pub fn render_checkerboard(&mut self, camera: &mut Camera, world: HittableList)
+	pub fn render_checkerboard(&mut self, camera: &mut Camera, world: &HittableList)
 	{
 		let mut pb: ProgressBar<std::io::Stdout> = ProgressBar::new(100);
 
@@ -340,22 +325,4 @@ impl Draw
 
 		pb.finish();
 	}
-	
-	
-
-	// #[allow(dead_code)]
-	// pub fn draw_aabb(&mut self)
-	// {
-	// 	let aabb_work = PostQueue::get_aabb_work();
-	// 	println!("{}", aabb_work.len());
-	// 	for aabb in aabb_work
-	// 	{
-	// 		let vertices = aabb.aabb_points;
-	// 		for vertex in vertices
-	// 		{
-	// 			let pixel = self.position_to_pixel(vertex, aabb.projection_matrix);
-	// 			self.pixel(pixel.x() as u32, pixel.y() as u32, Color::new(1.0, 1.0, 1.0), 1);
-	// 		}
-	// 	}
-	// }
 }

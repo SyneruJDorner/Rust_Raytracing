@@ -18,7 +18,7 @@ fn lighting_demo() -> HittableList
     //CENTERED SPHERE
     let mut glass_sphere = Sphere::new();
     glass_sphere.transform.set_scale(1.0, 1.0, 1.0);
-    glass_sphere.transform.set_rotation(0.0, 45.0, 0.0);
+    glass_sphere.transform.set_rotation(45.0, 45.0, 45.0);
     glass_sphere.transform.set_position(0.0, 1.0, 3.0);
     let glass_mat = Material::Glass(Glass::new(1.5));
     glass_sphere.material = glass_mat;
@@ -44,31 +44,46 @@ fn lighting_demo() -> HittableList
 
 
     //BACK SPHERE
+    // let mut albedo_sphere = Sphere::new();
+    // albedo_sphere.transform.set_scale(1.0, 1.0, 1.0);
+    // albedo_sphere.transform.set_rotation(0.0, 0.0, 0.0);
+    // albedo_sphere.transform.set_position(0.0, 1.0, -6.0);
+    // let albedo_mat = Material::Lambertian(Lambertian::new(0.0, 1.0, 1.0));
+    // albedo_sphere.material = albedo_mat;
+    // world.add(Box::new(albedo_sphere));
+
     let mut albedo_sphere = Sphere::new();
     albedo_sphere.transform.set_scale(1.0, 1.0, 1.0);
     albedo_sphere.transform.set_rotation(0.0, 0.0, 0.0);
-    albedo_sphere.transform.set_position(0.0, 1.0, -6.0);
+    albedo_sphere.transform.set_position(2.0, 1.0, -6.0);
     let albedo_mat = Material::Lambertian(Lambertian::new(0.0, 1.0, 0.0));
     albedo_sphere.material = albedo_mat;
     world.add(Box::new(albedo_sphere));
 
+    let mut albedo_sphere = Sphere::new();
+    albedo_sphere.transform.set_scale(1.0, 1.0, 1.0);
+    albedo_sphere.transform.set_rotation(0.0, 0.0, 0.0);
+    albedo_sphere.transform.set_position(-2.0, 1.0, -6.0);
+    let albedo_mat = Material::Lambertian(Lambertian::new(0.0, 0.0, 1.0));
+    albedo_sphere.material = albedo_mat;
+    world.add(Box::new(albedo_sphere));
 
-    //FRONT TRIANGLES
-    let mut albedo_triangle = Triangle::new();
-    albedo_triangle.transform.set_scale(1.0, 1.0, 1.0);
-    albedo_triangle.transform.set_rotation(90.0, 0.0, -45.0);
-    albedo_triangle.transform.set_position(1.0, 1.0, 4.0);
-    let albedo_mat = Material::Lambertian(Lambertian::from_color(Color::pink()));
-    albedo_triangle.material = albedo_mat;
-    world.add(Box::new(albedo_triangle));
+    // //FRONT TRIANGLES
+    // let mut albedo_triangle = Triangle::new();
+    // albedo_triangle.transform.set_scale(1.0, 1.0, 1.0);
+    // albedo_triangle.transform.set_rotation(90.0, 0.0, -45.0);
+    // albedo_triangle.transform.set_position(1.0, 1.0, 4.0);
+    // let albedo_mat = Material::Lambertian(Lambertian::from_color(Color::pink()));
+    // albedo_triangle.material = albedo_mat;
+    // world.add(Box::new(albedo_triangle));
 
-    let mut albedo_triangle = Plane::new();
-    albedo_triangle.transform.set_scale(1.0, 1.0, 1.0);
-    albedo_triangle.transform.set_rotation(90.0, 0.0, -45.0);
-    albedo_triangle.transform.set_position(-1.0, 1.0, 4.0);
-    let albedo_mat = Material::Lambertian(Lambertian::from_color(Color::teal()));
-    albedo_triangle.material = albedo_mat;
-    world.add(Box::new(albedo_triangle));
+    // let mut albedo_triangle = Plane::new();
+    // albedo_triangle.transform.set_scale(1.0, 1.0, 1.0);
+    // albedo_triangle.transform.set_rotation(90.0, 0.0, -45.0);
+    // albedo_triangle.transform.set_position(-1.0, 1.0, 4.0);
+    // let albedo_mat = Material::Lambertian(Lambertian::from_color(Color::teal()));
+    // albedo_triangle.material = albedo_mat;
+    // world.add(Box::new(albedo_triangle));
 
 
     // //FRONT CUBE

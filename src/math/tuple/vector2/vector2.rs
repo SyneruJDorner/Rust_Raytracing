@@ -1,5 +1,10 @@
 use crate::Tuple;
 
+mod operators
+{
+    pub mod sub;
+}
+
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Vector2(Tuple);
 
@@ -46,6 +51,19 @@ impl Vector2
     {
         self.0.y = y;
     }
+
+    #[allow(dead_code)]
+    pub fn magnitude(&self) -> f64
+    {
+        return (self.x().powi(2) + self.y().powi(2)).sqrt()
+    }
+
+    #[allow(dead_code)]
+    pub fn normalize(&self) -> Vector2
+    {
+        return Vector2(self.0 / self.magnitude());
+    }
+
 }
 
 impl From<Vector2> for Tuple

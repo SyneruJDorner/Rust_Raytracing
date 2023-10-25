@@ -1,8 +1,9 @@
+use uuid::Uuid;
 use crate::{Vector3, Point};
+use crate::AABB;
 use crate::Transform;
 use crate::Ray;
 use crate::Material;
-use uuid::Uuid;
 
 #[derive(Debug, Clone, Copy)]
 pub struct HitInfo
@@ -102,4 +103,6 @@ pub trait Hittable
 {
     fn hit(&self, world_ray: &Ray) -> Option<HitRecord>;
     fn hit_aabb(&self, world_ray: &Ray) -> bool;
+    fn get_aabb(&self) -> AABB;
+    fn get_transform(&self) -> Transform;
 }

@@ -39,7 +39,7 @@ impl Transform
         transform_matrix.matrix[2][3] = z;
         self.position = Point::new(x, y, z);
         self.transform = transform_matrix * self.transform;
-        self.aabb_bounds = AABB::calcaulte_aabb_bounds(self);
+        self.aabb_bounds = AABB::calcalute_aabb_bounds(self);
         return *self;
     }
 
@@ -52,7 +52,7 @@ impl Transform
         scale_matrix.matrix[2][2] = z;
         self.scale = Vector3::new(x, y, z);
         self.transform = scale_matrix * self.transform;
-        self.aabb_bounds = AABB::calcaulte_aabb_bounds(self);
+        self.aabb_bounds = AABB::calcalute_aabb_bounds(self);
         return *self;
     }
 
@@ -79,7 +79,7 @@ impl Transform
 
         self.rotation.set_x(x);
         self.transform = rotate_x_matrix * self.transform;
-        self.aabb_bounds = AABB::calcaulte_aabb_bounds(self);
+        self.aabb_bounds = AABB::calcalute_aabb_bounds(self);
         return *self;
     }
 
@@ -97,7 +97,7 @@ impl Transform
 
         self.rotation.set_y(y);
         self.transform = rotate_y_matrix * self.transform;
-        self.aabb_bounds = AABB::calcaulte_aabb_bounds(self);
+        self.aabb_bounds = AABB::calcalute_aabb_bounds(self);
         return *self;
     }
 
@@ -115,7 +115,7 @@ impl Transform
 
         self.rotation.set_z(z);
         self.transform = rotate_z_matrix * self.transform;
-        self.aabb_bounds = AABB::calcaulte_aabb_bounds(self);
+        self.aabb_bounds = AABB::calcalute_aabb_bounds(self);
         return *self;
     }
 
@@ -130,8 +130,35 @@ impl Transform
         shearing_matrix.matrix[2][0] = z_x;
         shearing_matrix.matrix[2][1] = z_y;
         self.transform = shearing_matrix * self.transform;
-        self.aabb_bounds = AABB::calcaulte_aabb_bounds(self);
+        self.aabb_bounds = AABB::calcalute_aabb_bounds(self);
         return *self;
+    }
+
+    pub fn rotation_matrix(&self) -> Matrix
+    {
+        let angle_x = self.rotation.x().to_radians();
+        let mut rotate_x_matrix = Matrix::identity();
+        rotate_x_matrix.matrix[1][1] = angle_x.cos();
+        rotate_x_matrix.matrix[1][2] = -angle_x.sin();
+        rotate_x_matrix.matrix[2][1] = angle_x.sin();
+        rotate_x_matrix.matrix[2][2] = angle_x.cos();
+
+        let angle_y = self.rotation.y().to_radians();
+        let mut rotate_y_matrix = Matrix::identity();
+        rotate_y_matrix.matrix[0][0] = angle_y.cos();
+        rotate_y_matrix.matrix[0][2] = angle_y.sin();
+        rotate_y_matrix.matrix[2][0] = -angle_y.sin();
+        rotate_y_matrix.matrix[2][2] = angle_y.cos();
+
+        let angle_z = self.rotation.z().to_radians();
+        let mut rotate_z_matrix = Matrix::identity();
+        rotate_z_matrix.matrix[0][0] = angle_z.cos();
+        rotate_z_matrix.matrix[0][1] = -angle_z.sin();
+        rotate_z_matrix.matrix[1][0] = angle_z.sin();
+        rotate_z_matrix.matrix[1][1] = angle_z.cos();
+
+        // Combining all rotation matrices to represent the current rotation state.
+        rotate_x_matrix * rotate_y_matrix * rotate_z_matrix
     }
 }
 

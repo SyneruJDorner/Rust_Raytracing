@@ -23,7 +23,6 @@ impl ops::Div<Matrix> for f64
     type Output = Matrix;
     fn div(self, b: Matrix) -> Matrix
     {
-        //let mut mat = vec![];
         let mut mat = Matrix::new();
         for y in 0..b.matrix.len()
         {
