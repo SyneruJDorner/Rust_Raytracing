@@ -15,7 +15,7 @@ This project is to test my knowledge in rust, by building on top of my knowledge
 - Anti-Aliasing.
 - Basic AABB without BVH.
 - Settings (though settings.ini file).
-- Debugging normals.
+- Debugging normals, AABB.
 - Command line feedback, like rendering progress.
 - Different rendering methods: Default (Raytracing) Checkerboard (Raytraced optimized, less accurate), Normal.
 <br/>
@@ -28,14 +28,13 @@ This project is to test my knowledge in rust, by building on top of my knowledge
 - Look into glTF { https://www.khronos.org/gltf/ }.
 - Threading and Multi-Core Processing.
 - General Optimizations.
-- Debugging AABB.
 - BVH
 <br/>
 
 **How to run:**<br/>
 - Have Rust installed.
 - Navigate to the cloned directory.
-- Run it using the command "cargo run .\main.rs".
+- Run it using the command "cargo run --release".
 - This will generate an image titled "image.ppm" format, you may will need a Mac to open it or use a website to open and view it.
 <br/>
 
