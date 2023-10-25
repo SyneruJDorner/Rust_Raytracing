@@ -160,6 +160,28 @@ impl Transform
         // Combining all rotation matrices to represent the current rotation state.
         rotate_x_matrix * rotate_y_matrix * rotate_z_matrix
     }
+
+    
+    pub fn normal_transform(&self) -> Option<Matrix>
+    {
+        // Assuming your Matrix struct has an inverse() method.
+        let inverse = self.transform.inverse();
+        
+        match inverse {
+            Some(inverse_matrix) => { return Some(inverse_matrix.transpose()) }, // If the inverse exists, compute and return its transpose.
+            None => { return None } // If the inverse does not exist, return None.
+        }
+    }
+
+    pub fn transform_normal(&self, normal: &Vector3) -> Option<Vector3>
+    {
+        let nt = self.normal_transform();
+        match nt
+        {
+            Some(matrix) => { return Some(matrix * (*normal)) },
+            None => { return None }
+        }
+    }
 }
 
 impl Default for Transform

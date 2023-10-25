@@ -28,6 +28,7 @@ This project is to test my knowledge in rust, by building on top of my knowledge
 - Look into glTF { https://www.khronos.org/gltf/ }.
 - Threading and Multi-Core Processing.
 - General Optimizations.
+- Per object debugging on normals and AABB
 - BVH
 <br/>
 
@@ -65,5 +66,8 @@ This project is to test my knowledge in rust, by building on top of my knowledge
 **Checkerboard Raytraced Examples:**<br/>
 ![Prefab](https://github.com/justindd1994/Rust_Raytracing/blob/master/images/ray-tracing-demo-8.png)<br/>
 
-**AABB Examples:**<br/>
+**Debug AABB Examples:**<br/>
 ![Prefab](https://github.com/justindd1994/Rust_Raytracing/blob/master/images/ray-tracing-demo-9.png)<br/>
+
+**Debug Normal Examples:**<br/>
+![Prefab](https://github.com/justindd1994/Rust_Raytracing/blob/master/images/ray-tracing-demo-10.png)<br/>

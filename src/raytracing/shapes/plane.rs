@@ -37,7 +37,9 @@ impl Plane
 
     pub fn normal_at(&self) -> Vector3
     {
-        return Vector3::new(0.0, 1.0, 0.0);
+        let local_normal = Vector3::new(0.0, 1.0, 0.0); // Local space normal
+        let world_normal = self.transform.transform_normal(&local_normal).unwrap(); // Transform the normal to world space
+        return world_normal.normalize();
     }
 }
 
